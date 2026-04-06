@@ -157,13 +157,18 @@
         </div>
 
         <div class="hint" id="statusHint">
-          Рабочая схема: поправить список медиа и нажать <b>Сохранить в media-placement.md</b>. Превью читает этот же файл.
+          Поправь список медиа и нажми <b>Сохранить в media-placement.md</b>. Справа показывается живая середина превью.
         </div>
       </section>
 
       <section class="preview">
         <h2>Текущая расстановка</h2>
         <div id="itemsList"></div>
+        <h2 style="margin-top:18px">Фрагмент превью</h2>
+        <div class="small" style="margin-bottom:8px">Это встроенная середина страницы превью. После сохранения можно обновить этот блок.</div>
+        <div style="border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; height:900px;">
+          <iframe id="previewFrame" src="./preview.html" style="width:100%; height:1600px; border:0; transform:translateY(-220px); pointer-events:auto;"></iframe>
+        </div>
       </section>
     </div>
   </main>
@@ -313,8 +318,8 @@
             <div class="small">${item.type === 'image-grid' ? (item.items || []).join(' | ') : (item.src || '')}</div>
             ${item.caption ? `<div style="margin-top:8px">${item.caption}</div>` : ''}
             <div class="item-actions" style="margin-top:10px">
-              <button data-edit="${chapter}::${index}">Edit</button>
-              <button data-remove="${chapter}::${index}">Remove</button>
+              <button data-edit="${chapter}::${index}">Изменить</button>
+              <button data-remove="${chapter}::${index}">Удалить</button>
             </div>
           `;
           itemsListEl.appendChild(div);
@@ -345,7 +350,9 @@
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
-        setStatus('Сохранено в <code>media-placement.md</code>. Теперь обнови превью.');
+        setStatus('Сохранено в <code>media-placement.md</code>. Правый фрагмент превью сейчас обновлю.');
+        const frame = document.getElementById('previewFrame');
+        frame.src = `./preview.html?ts=${Date.now()}`;
       } catch (e) {
         console.error(e);
         setStatus(`Не удалось сохранить: <code>${String(e.message || e)}</code>`);
@@ -403,7 +410,7 @@
 
     resetForm();
     loadExisting();
-    setStatus('Рабочая схема: поправить список медиа и нажать <b>Сохранить в media-placement.md</b>.');
+    setStatus('Поправь список медиа и нажми <b>Сохранить в media-placement.md</b>. Справа встроен живой фрагмент превью.');
   </script>
 </body>
 </html>
