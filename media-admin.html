@@ -446,17 +446,6 @@
   </main>
 
   <script>
-    const CHAPTERS = [
-      '1. Казань начала ХХ века',
-      '2. Начало ХХ века — время активного взаимопроникновения русской и татарской музыкальных культур',
-      '3. Опера и балет до 1930-х',
-      '4. Татарская музыка в Советском Союзе. Начало',
-      '5. Как работает новая система',
-      '6. Рок-музыка в Казани',
-      '7. Казанская музыка в 1990-е и 2000-е',
-      '8. Татарская эстрада и альтернатива'
-    ];
-
     const state = {};
     let editing = null;
     let sidebarDatesByChapter = {};
@@ -473,13 +462,16 @@
     const srcField = document.getElementById('srcField');
     const statusHintEl = document.getElementById('statusHint');
 
-    CHAPTERS.forEach(ch => {
-      const option = document.createElement('option');
-      option.value = ch;
-      option.textContent = ch;
-      chapterEl.appendChild(option);
-      state[ch] = [];
-    });
+    function syncChapterOptions() {
+      chapterEl.innerHTML = '';
+      textChapters.forEach(ch => {
+        const option = document.createElement('option');
+        option.value = ch.title;
+        option.textContent = ch.title;
+        chapterEl.appendChild(option);
+        if (!state[ch.title]) state[ch.title] = [];
+      });
+    }
 
     typeEl.addEventListener('change', () => {
       const isGrid = typeEl.value === 'image-grid';
@@ -493,6 +485,7 @@
 
     function resetForm() {
       editing = null;
+      if (textChapters.length) chapterEl.value = textChapters[0].title;
       positionEl.value = 'before-blocks';
       typeEl.value = 'image';
       blockEl.value = '';
@@ -636,7 +629,8 @@
 
     function parseMediaPlacement(md) {
       const lines = md.split('\n');
-      CHAPTERS.forEach(ch => { state[ch] = []; });
+      Object.keys(state).forEach(key => { delete state[key]; });
+      textChapters.forEach(ch => { state[ch.title] = []; });
       let currentChapter = null;
       let currentItem = null;
       let itemsMode = false;
@@ -757,7 +751,8 @@
       let out = '# Media placement\n\n';
       out += 'Этот файл описывает, какие медиа вставляются в страницу, где именно они стоят и зачем.\n\n';
       out += '---\n\n';
-      for (const chapter of CHAPTERS) {
+      for (const chapterObj of textChapters) {
+        const chapter = chapterObj.title;
         const items = state[chapter];
         if (!items.length) continue;
         out += `# ${chapter}\n\n`;
@@ -899,7 +894,9 @@
     async function saveToFile() {
       try {
         const payload = { chapters: {} };
-        for (const chapter of CHAPTERS) payload.chapters[chapter] = state[chapter] || [];
+        textChapters.forEach(chapterObj => {
+          payload.chapters[chapterObj.title] = state[chapterObj.title] || [];
+        });
         const res = await fetch('/save-media', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -927,8 +924,9 @@
           textRes.text(),
           datesRes.text()
         ]);
-        parseMediaPlacement(mediaMd);
         textChapters = parseMarkdown(textMd);
+        syncChapterOptions();
+        parseMediaPlacement(mediaMd);
         sidebarDatesByChapter = parseSidebarDates(datesMd);
       } catch (e) {
         console.error(e);
