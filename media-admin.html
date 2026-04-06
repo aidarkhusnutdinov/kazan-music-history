@@ -404,7 +404,7 @@
 
         <div class="field" id="srcField">
           <label for="src">Ссылка / путь</label>
-          <input id="src" placeholder="https://... или ./kazan-panorama.jpg" />
+          <input id="src" placeholder="https://... или kazan-panorama.jpg" />
         </div>
 
         <div class="field" id="itemsField" style="display:none">
@@ -502,6 +502,12 @@
       captionEl.value = '';
       typeEl.dispatchEvent(new Event('change'));
       document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
+    }
+
+    function normalizeMediaPath(value) {
+      const trimmed = String(value || '').trim();
+      if (/^(https?:)?\/\//i.test(trimmed)) return trimmed;
+      return trimmed.replace(/^\.\//, '');
     }
 
     function escapeHtml(str) {
@@ -667,10 +673,10 @@
         if (!currentItem) continue;
         if (line.includes('**block:**')) currentItem.block = line.split('**block:**')[1].trim();
         else if (line.includes('**type:**')) currentItem.type = line.split('**type:**')[1].trim();
-        else if (line.includes('**src:**')) currentItem.src = line.split('**src:**')[1].trim().replace(/^`|`$/g, '');
+        else if (line.includes('**src:**')) currentItem.src = normalizeMediaPath(line.split('**src:**')[1].trim().replace(/^`|`$/g, ''));
         else if (line.includes('**caption:**')) currentItem.caption = line.split('**caption:**')[1].trim();
         else if (line.includes('**items:**')) { currentItem.items = []; itemsMode = true; }
-        else if (itemsMode && line.trim().startsWith('- `')) currentItem.items.push(line.trim().slice(3, -1));
+        else if (itemsMode && line.trim().startsWith('- `')) currentItem.items.push(normalizeMediaPath(line.trim().slice(3, -1)));
       }
       pushCurrent();
     }
@@ -742,7 +748,7 @@
       if (item.type === 'image-grid') {
         item.items = itemsEl.value.split('\n').map(s => s.trim()).filter(Boolean);
       } else {
-        item.src = srcEl.value.trim();
+        item.src = normalizeMediaPath(srcEl.value);
       }
 
       if (editing) {
@@ -770,9 +776,9 @@
           out += `  - **type:** ${item.type}\n`;
           if (item.type === 'image-grid') {
             out += `  - **items:**\n`;
-            for (const src of item.items || []) out += `    - \`${src}\`\n`;
+            for (const src of item.items || []) out += `    - \`${normalizeMediaPath(src)}\`\n`;
           } else {
-            out += `  - **src:** \`${item.src || ''}\`\n`;
+            out += `  - **src:** \`${normalizeMediaPath(item.src || '')}\`\n`;
           }
           if (item.caption) out += `  - **caption:** ${item.caption}\n`;
           out += '\n';
