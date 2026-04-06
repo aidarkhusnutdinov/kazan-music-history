@@ -385,14 +385,7 @@
         <div class="row">
           <div class="field">
             <label for="position">Позиция</label>
-            <select id="position">
-              <option value="before-blocks">Перед блоками главы</option>
-              <option value="after-block-0">После блока 1</option>
-              <option value="after-block-1">После блока 2</option>
-              <option value="after-block-2">После блока 3</option>
-              <option value="after-block-3">После блока 4</option>
-              <option value="after-block-4">После блока 5</option>
-            </select>
+            <select id="position"></select>
           </div>
           <div class="field">
             <label for="type">Тип</label>
@@ -473,10 +466,25 @@
       });
     }
 
+    function rebuildPositionOptions(chapterTitle, selectedValue = 'before-blocks') {
+      const chapter = textChapters.find(ch => ch.title === chapterTitle);
+      const blockCount = chapter ? chapter.blocks.length : 0;
+      const options = [{ value: 'before-blocks', label: 'Перед блоками главы' }];
+      for (let i = 0; i < blockCount; i += 1) {
+        options.push({ value: `after-block-${i}`, label: `После блока ${i + 1}` });
+      }
+      positionEl.innerHTML = options.map(option => `<option value="${option.value}">${option.label}</option>`).join('');
+      positionEl.value = options.some(option => option.value === selectedValue) ? selectedValue : 'before-blocks';
+    }
+
     typeEl.addEventListener('change', () => {
       const isGrid = typeEl.value === 'image-grid';
       itemsField.style.display = isGrid ? '' : 'none';
       srcField.style.display = isGrid ? 'none' : '';
+    });
+
+    chapterEl.addEventListener('change', () => {
+      rebuildPositionOptions(chapterEl.value, 'before-blocks');
     });
 
     function setStatus(text) {
@@ -486,7 +494,7 @@
     function resetForm() {
       editing = null;
       if (textChapters.length) chapterEl.value = textChapters[0].title;
-      positionEl.value = 'before-blocks';
+      rebuildPositionOptions(chapterEl.value, 'before-blocks');
       typeEl.value = 'image';
       blockEl.value = '';
       srcEl.value = '';
@@ -689,11 +697,11 @@
 
     function focusForm(chapter, position, itemIndex = null) {
       chapterEl.value = chapter;
-      positionEl.value = position;
+      rebuildPositionOptions(chapter, position);
       if (itemIndex === null) {
         resetForm();
         chapterEl.value = chapter;
-        positionEl.value = position;
+        rebuildPositionOptions(chapter, position);
       }
       document.querySelector(`[data-slot="${chapter}::${position}"]`)?.classList.add('editor-highlight');
       chapterEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -704,7 +712,7 @@
       const item = state[chapter][index];
       editing = { chapter, index };
       chapterEl.value = chapter;
-      positionEl.value = item.position;
+      rebuildPositionOptions(chapter, item.position);
       typeEl.value = item.type;
       blockEl.value = item.block || '';
       captionEl.value = item.caption || '';
@@ -932,6 +940,7 @@
         console.error(e);
       }
       renderAdminPreview();
+      rebuildPositionOptions(chapterEl.value, positionEl.value);
     }
 
     document.getElementById('addBtn').onclick = addOrUpdate;
