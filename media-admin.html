@@ -30,7 +30,7 @@
     a { color: var(--link); text-decoration: none; border-bottom: 1px solid rgba(41,94,168,.28); }
     a:hover { border-bottom-color: rgba(41,94,168,.8); }
     .page {
-      width: min(1440px, calc(100vw - 32px));
+      width: min(1560px, calc(100vw - 32px));
       margin: 0 auto;
       padding: 24px 0 48px;
     }
@@ -41,8 +41,8 @@
     .lead { color: var(--muted); margin: 0; max-width: 900px; line-height: 1.5; font-family: Arial, sans-serif; }
     .layout {
       display: grid;
-      grid-template-columns: 360px minmax(0, 1fr);
-      gap: 20px;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 32px;
       align-items: start;
     }
     .panel {
@@ -106,7 +106,7 @@
     }
     .timeline {
       position: relative;
-      margin-left: 120px;
+      margin-left: 180px;
       padding-right: 180px;
     }
     .timeline::before {
@@ -292,11 +292,18 @@
     .expand p { margin: 0; font-size: 17px; white-space: normal; }
     .markdown p { margin: 0 0 10px; }
     .markdown p:last-child { margin-bottom: 0; }
+    .editor-media {
+      position: relative;
+    }
     .editor-toolbar {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 5;
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin: 8px 0 12px;
+      max-width: calc(100% - 24px);
       font-family: Arial, sans-serif;
     }
     .editor-toolbar button {
@@ -305,31 +312,29 @@
       font-size: 12px;
       border-radius: 999px;
       border-color: rgba(41,94,168,.22);
-      background: var(--editor);
+      background: rgba(255,255,255,.92);
       color: var(--editor-strong);
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
     }
     .editor-slot {
-      border: 1px dashed rgba(41,94,168,.35);
-      border-radius: 16px;
-      padding: 10px 12px;
-      margin: 10px 0 16px;
-      background: rgba(41,94,168,.04);
+      display: flex;
+      justify-content: center;
+      margin: 8px 0 18px;
       font-family: Arial, sans-serif;
     }
-    .editor-slot-title {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
     .editor-slot button {
-      width: auto;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border-color: rgba(41,94,168,.22);
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 50%;
+      border-color: rgba(41,94,168,.28);
       background: white;
       color: var(--editor-strong);
+      font-size: 24px;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
     }
     .editor-empty {
       font: 13px/1.45 Arial, sans-serif;
@@ -777,8 +782,8 @@
     function renderMediaItem(item, chapterTitle, itemIndex) {
       const toolbar = `
         <div class="editor-toolbar">
-          <button type="button" data-edit-item="${chapterTitle}::${itemIndex}">Изменить медиа</button>
-          <button type="button" data-remove-item="${chapterTitle}::${itemIndex}">Удалить медиа</button>
+          <button type="button" data-edit-item="${chapterTitle}::${itemIndex}">Изменить</button>
+          <button type="button" data-remove-item="${chapterTitle}::${itemIndex}">Удалить</button>
         </div>
       `;
       if (item.type === 'image') {
@@ -823,9 +828,8 @@
 
     function renderSlot(chapterTitle, position, label) {
       return `
-        <div class="editor-slot" data-slot="${chapterTitle}::${position}">
-          <div class="editor-slot-title">${escapeHtml(label)}</div>
-          <button type="button" data-add-slot="${chapterTitle}::${position}">Добавить медиа сюда</button>
+        <div class="editor-slot" data-slot="${chapterTitle}::${position}" title="${escapeHtml(label)}">
+          <button type="button" data-add-slot="${chapterTitle}::${position}" aria-label="${escapeHtml(label)}">+</button>
         </div>
       `;
     }
