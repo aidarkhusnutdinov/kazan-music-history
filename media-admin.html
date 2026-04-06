@@ -154,8 +154,6 @@
         <div class="actions">
           <button class="primary" id="addBtn">Добавить элемент</button>
           <button class="primary" id="saveBtn">Сохранить в media-placement.md</button>
-          <button id="downloadBtn">Скачать media-placement.md</button>
-          <button id="openPreviewBtn">Открыть превью</button>
         </div>
 
         <div class="hint" id="statusHint">
@@ -166,9 +164,6 @@
       <section class="preview">
         <h2>Текущая расстановка</h2>
         <div id="itemsList"></div>
-        <h2 style="margin-top:18px">Export</h2>
-        <div class="small" style="margin-bottom:8px">Это текст будущего <code>media-placement.md</code>.</div>
-        <div class="export-box" id="exportBox"></div>
       </section>
     </div>
   </main>
@@ -198,7 +193,6 @@
     const itemsField = document.getElementById('itemsField');
     const srcField = document.getElementById('srcField');
     const itemsListEl = document.getElementById('itemsList');
-    const exportBoxEl = document.getElementById('exportBox');
     const statusHintEl = document.getElementById('statusHint');
 
     CHAPTERS.forEach(ch => {
@@ -326,8 +320,6 @@
           itemsListEl.appendChild(div);
         });
       }
-      exportBoxEl.textContent = renderMd();
-
       itemsListEl.querySelectorAll('[data-edit]').forEach(btn => {
         btn.onclick = () => {
           const [chapter, index] = btn.dataset.edit.split('::');
@@ -408,18 +400,6 @@
 
     document.getElementById('addBtn').onclick = addOrUpdate;
     document.getElementById('saveBtn').onclick = saveToFile;
-    document.getElementById('openPreviewBtn').onclick = () => {
-      window.open('./preview.html', '_blank');
-    };
-    document.getElementById('downloadBtn').onclick = () => {
-      const blob = new Blob([renderMd()], { type: 'text/markdown;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'media-placement.md';
-      a.click();
-      URL.revokeObjectURL(url);
-    };
 
     resetForm();
     loadExisting();
