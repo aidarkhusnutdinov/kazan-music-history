@@ -118,9 +118,8 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const data = JSON.parse(body || '{}');
-        fs.writeFileSync(MEDIA_JSON, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
         fs.writeFileSync(MEDIA_MD, renderMd(data), 'utf8');
-        sendJson(res, 200, { ok: true });
+        sendJson(res, 200, { ok: true, target: 'media-placement.md' });
       } catch (error) {
         sendJson(res, 500, { ok: false, error: String(error.message || error) });
       }

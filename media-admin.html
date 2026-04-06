@@ -153,13 +153,13 @@
 
         <div class="actions">
           <button class="primary" id="addBtn">Добавить элемент</button>
-          <button id="exportBtn">Собрать media-placement.md</button>
+          <button class="primary" id="saveBtn">Сохранить в media-placement.md</button>
           <button id="downloadBtn">Скачать media-placement.md</button>
           <button id="openPreviewBtn">Открыть превью</button>
         </div>
 
-        <div class="hint">
-          Рабочая схема: открыть страницу, поправить список медиа, нажать <b>Собрать</b> или <b>Скачать media-placement.md</b>. Эта версия ничего не пишет в проект автоматически — только собирает итоговый markdown.
+        <div class="hint" id="statusHint">
+          Рабочая схема: поправить список медиа и нажать <b>Сохранить в media-placement.md</b>. Превью читает этот же файл.
         </div>
       </section>
 
@@ -199,6 +199,7 @@
     const srcField = document.getElementById('srcField');
     const itemsListEl = document.getElementById('itemsList');
     const exportBoxEl = document.getElementById('exportBox');
+    const statusHintEl = document.getElementById('statusHint');
 
     CHAPTERS.forEach(ch => {
       const option = document.createElement('option');
@@ -213,6 +214,10 @@
       itemsField.style.display = isGrid ? '' : 'none';
       srcField.style.display = isGrid ? 'none' : '';
     });
+
+    function setStatus(text) {
+      statusHintEl.innerHTML = text;
+    }
 
     function resetForm() {
       editing = null;
@@ -247,6 +252,7 @@
       }
       resetForm();
       renderState();
+      setStatus('Изменение внесено локально. Теперь нажми <b>Сохранить в media-placement.md</b>.');
     }
 
     function editItem(chapter, index) {
@@ -336,6 +342,24 @@
       });
     }
 
+    async function saveToFile() {
+      try {
+        const payload = { chapters: {} };
+        for (const chapter of CHAPTERS) payload.chapters[chapter] = state[chapter] || [];
+        const res = await fetch('/save-media', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        setStatus('Сохранено в <code>media-placement.md</code>. Теперь обнови превью.');
+      } catch (e) {
+        console.error(e);
+        setStatus(`Не удалось сохранить: <code>${String(e.message || e)}</code>`);
+      }
+    }
+
     async function loadExisting() {
       try {
         const res = await fetch('./media-placement.md', { cache: 'no-store' });
@@ -383,7 +407,7 @@
     }
 
     document.getElementById('addBtn').onclick = addOrUpdate;
-    document.getElementById('exportBtn').onclick = renderState;
+    document.getElementById('saveBtn').onclick = saveToFile;
     document.getElementById('openPreviewBtn').onclick = () => {
       window.open('./preview.html', '_blank');
     };
@@ -399,6 +423,7 @@
 
     resetForm();
     loadExisting();
+    setStatus('Рабочая схема: поправить список медиа и нажать <b>Сохранить в media-placement.md</b>.');
   </script>
 </body>
 </html>
