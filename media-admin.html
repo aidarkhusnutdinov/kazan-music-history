@@ -418,23 +418,19 @@
             <input id="textChapterTitle" placeholder="Название главы" disabled />
           </div>
           <div class="field">
-            <label for="textKicker">Кикер блока</label>
-            <input id="textKicker" placeholder="Кикер блока" disabled />
-          </div>
-          <div class="field">
             <label for="textBlockTitle">Заголовок блока</label>
             <input id="textBlockTitle" placeholder="Заголовок блока" />
           </div>
           <div class="field">
             <label for="textMain">Основной текст</label>
-            <textarea id="textMain" placeholder="Основной текст"></textarea>
+            <textarea id="textMain" placeholder="Основной текст" style="min-height:220px"></textarea>
           </div>
           <div class="field">
             <label for="textExpand">Разворот</label>
-            <textarea id="textExpand" placeholder="Текст разворота"></textarea>
+            <textarea id="textExpand" placeholder="Текст разворота" style="min-height:220px"></textarea>
           </div>
           <div class="actions">
-            <button id="saveTextBtn">Сохранить в text-draft.md</button>
+            <button class="primary" id="saveTextBtn">Сохранить в text-draft.md</button>
           </div>
         </div>
 
@@ -477,7 +473,6 @@
     const editorTitleEl = document.getElementById('editorTitle');
     const editorModeLabelEl = document.getElementById('editorModeLabel');
     const textChapterTitleEl = document.getElementById('textChapterTitle');
-    const textKickerEl = document.getElementById('textKicker');
     const textBlockTitleEl = document.getElementById('textBlockTitle');
     const textMainEl = document.getElementById('textMain');
     const textExpandEl = document.getElementById('textExpand');
@@ -577,7 +572,6 @@
       itemsEl.value = '';
       captionEl.value = '';
       textChapterTitleEl.value = '';
-      textKickerEl.value = '';
       textBlockTitleEl.value = '';
       textMainEl.value = '';
       textExpandEl.value = '';
@@ -758,7 +752,6 @@
       editing = { kind: 'text', chapterIndex, blockIndex };
       setEditorMode('text');
       textChapterTitleEl.value = chapter.title || '';
-      textKickerEl.value = block.kicker || '';
       textBlockTitleEl.value = block.title || '';
       textMainEl.value = block.main || '';
       textExpandEl.value = block.expand || '';
