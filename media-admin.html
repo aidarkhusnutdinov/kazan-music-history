@@ -417,9 +417,33 @@
           <textarea id="caption" placeholder="Короткая подпись или пояснение"></textarea>
         </div>
 
+        <div id="textEditorFields" style="display:none">
+          <div class="field">
+            <label for="textChapterTitle">Название главы</label>
+            <input id="textChapterTitle" placeholder="Название главы" />
+          </div>
+          <div class="field">
+            <label for="textKicker">Кикер блока</label>
+            <input id="textKicker" placeholder="Кикер блока" />
+          </div>
+          <div class="field">
+            <label for="textBlockTitle">Заголовок блока</label>
+            <input id="textBlockTitle" placeholder="Заголовок блока" />
+          </div>
+          <div class="field">
+            <label for="textMain">Основной текст</label>
+            <textarea id="textMain" placeholder="Основной текст"></textarea>
+          </div>
+          <div class="field">
+            <label for="textExpand">Разворот</label>
+            <textarea id="textExpand" placeholder="Текст разворота"></textarea>
+          </div>
+        </div>
+
         <div class="actions">
           <button class="primary" id="addBtn">Добавить элемент</button>
           <button class="primary" id="saveBtn">Сохранить в media-placement.md</button>
+          <button id="saveTextBtn" style="display:none">Сохранить в text-draft.md</button>
         </div>
 
         <div class="hint" id="statusHint">
@@ -454,6 +478,13 @@
     const itemsField = document.getElementById('itemsField');
     const srcField = document.getElementById('srcField');
     const statusHintEl = document.getElementById('statusHint');
+    const textEditorFieldsEl = document.getElementById('textEditorFields');
+    const saveTextBtnEl = document.getElementById('saveTextBtn');
+    const textChapterTitleEl = document.getElementById('textChapterTitle');
+    const textKickerEl = document.getElementById('textKicker');
+    const textBlockTitleEl = document.getElementById('textBlockTitle');
+    const textMainEl = document.getElementById('textMain');
+    const textExpandEl = document.getElementById('textExpand');
 
     function syncChapterOptions() {
       chapterEl.innerHTML = '';
@@ -491,10 +522,31 @@
       statusHintEl.innerHTML = text;
     }
 
+    function setEditorMode(mode) {
+      const mediaMode = mode !== 'text';
+      chapterEl.closest('.field').style.display = mediaMode ? '' : 'none';
+      positionEl.closest('.field').style.display = mediaMode ? '' : 'none';
+      typeEl.closest('.field').style.display = mediaMode ? '' : 'none';
+      blockEl.closest('.field').style.display = mediaMode ? '' : 'none';
+      srcField.style.display = mediaMode && typeEl.value !== 'image-grid' ? '' : 'none';
+      itemsField.style.display = mediaMode && typeEl.value === 'image-grid' ? '' : 'none';
+      captionEl.closest('.field').style.display = mediaMode ? '' : 'none';
+      document.getElementById('addBtn').style.display = mediaMode ? '' : 'none';
+      document.getElementById('saveBtn').style.display = mediaMode ? '' : 'none';
+      textEditorFieldsEl.style.display = mode === 'text' ? '' : 'none';
+      saveTextBtnEl.style.display = mode === 'text' ? '' : 'none';
+    }
+
     function resetForm() {
       editing = null;
       if (textChapters.length) chapterEl.value = textChapters[0].title;
       rebuildPositionOptions(chapterEl.value, 'before-blocks');
+      setEditorMode('media');
+      textChapterTitleEl.value = '';
+      textKickerEl.value = '';
+      textBlockTitleEl.value = '';
+      textMainEl.value = '';
+      textExpandEl.value = '';
       typeEl.value = 'image';
       blockEl.value = '';
       srcEl.value = '';
@@ -714,6 +766,23 @@
       chapterEl.focus();
     }
 
+    function editTextBlock(chapterIndex, blockIndex) {
+      const chapter = textChapters[chapterIndex];
+      const block = chapter.blocks[blockIndex];
+      editing = { kind: 'text', chapterIndex, blockIndex };
+      setEditorMode('text');
+      textChapterTitleEl.value = chapter.title || '';
+      textKickerEl.value = block.kicker || '';
+      textBlockTitleEl.value = block.title || '';
+      textMainEl.value = block.main || '';
+      textExpandEl.value = block.expand || '';
+      document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
+      document.querySelector(`[data-text-block-key="${chapterIndex}::${blockIndex}"]`)?.classList.add('editor-highlight');
+      setStatus('Редактируй текст слева и нажми <b>Сохранить в text-draft.md</b>.');
+      textChapterTitleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      textChapterTitleEl.focus();
+    }
+
     function editItem(chapter, index) {
       const item = state[chapter][index];
       editing = { chapter, index };
@@ -856,6 +925,32 @@
       return `${rendered}${renderSlot(chapterTitle, position, label)}`;
     }
 
+    async function saveTextDraft() {
+      if (!editing || editing.kind !== 'text') return;
+      const chapter = textChapters[editing.chapterIndex];
+      const block = chapter.blocks[editing.blockIndex];
+      chapter.title = textChapterTitleEl.value.trim();
+      block.kicker = textKickerEl.value.trim();
+      block.title = textBlockTitleEl.value.trim();
+      block.main = textMainEl.value.trim();
+      block.expand = textExpandEl.value.trim();
+      try {
+        const res = await fetch('/save-text-draft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chapters: textChapters })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        syncChapterOptions();
+        renderAdminPreview();
+        setStatus('Сохранено в <code>text-draft.md</code>.');
+      } catch (e) {
+        console.error(e);
+        setStatus(`Не удалось сохранить text-draft.md: <code>${String(e.message || e)}</code>`);
+      }
+    }
+
     function renderAdminPreview() {
       const root = document.getElementById('timeline');
       root.innerHTML = textChapters.map((chapter, idx) => `
@@ -867,16 +962,21 @@
             ${renderInlineMedia(chapter.title, 'before-blocks')}
             <div class="blocks">
               ${chapter.blocks.map((block, blockIdx) => `
-                <details class="block">
-                  <summary>
-                    <div class="block-kicker">${escapeHtml(block.title || '')}</div>
-                    <div class="block-main markdown">${blockTextToHtml(block.main)}</div>
-                    <span class="toggle">⌄</span>
-                  </summary>
-                  <div class="expand">
-                    <div class="markdown">${blockTextToHtml(block.expand || '')}</div>
+                <div data-text-block-key="${idx}::${blockIdx}">
+                  <div class="editor-toolbar" style="position:static; margin:0 0 8px; max-width:none;">
+                    <button type="button" data-edit-text="${idx}::${blockIdx}">Редактировать текст</button>
                   </div>
-                </details>
+                  <details class="block">
+                    <summary>
+                      <div class="block-kicker">${escapeHtml(block.title || '')}</div>
+                      <div class="block-main markdown">${blockTextToHtml(block.main)}</div>
+                      <span class="toggle">⌄</span>
+                    </summary>
+                    <div class="expand">
+                      <div class="markdown">${blockTextToHtml(block.expand || '')}</div>
+                    </div>
+                  </details>
+                </div>
                 ${renderInlineMedia(chapter.title, `after-block-${blockIdx}`)}
               `).join('')}
             </div>
@@ -901,6 +1001,12 @@
           const [chapter, position] = btn.dataset.addSlot.split('::');
           focusForm(chapter, position);
           setStatus('Заполни поля слева для новой медиа-вставки, потом нажми <b>Добавить элемент</b>.');
+        };
+      });
+      root.querySelectorAll('[data-edit-text]').forEach(btn => {
+        btn.onclick = () => {
+          const [chapterIndex, blockIndex] = btn.dataset.editText.split('::');
+          editTextBlock(Number(chapterIndex), Number(blockIndex));
         };
       });
     }
@@ -951,6 +1057,7 @@
 
     document.getElementById('addBtn').onclick = addOrUpdate;
     document.getElementById('saveBtn').onclick = saveToFile;
+    saveTextBtnEl.onclick = saveTextDraft;
 
     resetForm();
     loadExisting();

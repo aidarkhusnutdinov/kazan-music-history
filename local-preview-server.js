@@ -9,6 +9,7 @@ const HOST = '127.0.0.1';
 const PORT = Number(process.env.KAZAN_PREVIEW_PORT || 8011);
 const MEDIA_JSON = path.join(BASE_DIR, 'media-placement.json');
 const MEDIA_MD = path.join(BASE_DIR, 'media-placement.md');
+const TEXT_DRAFT_MD = path.join(BASE_DIR, 'text-draft.md');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -77,6 +78,32 @@ function renderMd(data) {
   return `${out.join('\n').trim()}\n`;
 }
 
+function renderTextDraft(chapters) {
+  const out = [];
+  for (const chapter of Array.isArray(chapters) ? chapters : []) {
+    out.push(`# ${chapter.title || ''}`);
+    out.push('');
+    for (const block of Array.isArray(chapter.blocks) ? chapter.blocks : []) {
+      out.push(`## ${block.kicker || ''}`);
+      if (block.title) {
+        out.push(`### ${block.title}`);
+      }
+      if (block.main) {
+        out.push(block.main.trim());
+      }
+      out.push('');
+      if (block.expand) {
+        out.push('**Разворот:**');
+        out.push(block.expand.trim());
+        out.push('');
+      }
+    }
+    out.push('---');
+    out.push('');
+  }
+  return `${out.join('\n').trim()}\n`;
+}
+
 function safeJoin(base, targetPath) {
   const resolved = path.resolve(base, `.${targetPath}`);
   if (!resolved.startsWith(path.resolve(base) + path.sep) && resolved !== path.resolve(base)) {
@@ -107,7 +134,7 @@ function serveFile(res, filePath) {
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${HOST}:${PORT}`);
 
-  if (req.method === 'POST' && url.pathname === '/save-media') {
+  if (req.method === 'POST' && (url.pathname === '/save-media' || url.pathname === '/save-text-draft')) {
     let body = '';
     req.on('data', chunk => {
       body += chunk;
@@ -118,8 +145,13 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const data = JSON.parse(body || '{}');
-        fs.writeFileSync(MEDIA_MD, renderMd(data), 'utf8');
-        sendJson(res, 200, { ok: true, target: 'media-placement.md' });
+        if (url.pathname === '/save-media') {
+          fs.writeFileSync(MEDIA_MD, renderMd(data), 'utf8');
+          sendJson(res, 200, { ok: true, target: 'media-placement.md' });
+          return;
+        }
+        fs.writeFileSync(TEXT_DRAFT_MD, renderTextDraft(data.chapters), 'utf8');
+        sendJson(res, 200, { ok: true, target: 'text-draft.md' });
       } catch (error) {
         sendJson(res, 500, { ok: false, error: String(error.message || error) });
       }
