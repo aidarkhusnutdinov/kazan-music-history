@@ -8,8 +8,8 @@
 
 - **position:** before-blocks
   - **type:** image
-  - **src:** `./kazan-panorama.jpg`
-  - **caption:** Панорама как вход в текст: сначала город, потом уже его музыкальная жизнь!!
+  - **src:** `kazan-panorama.jpg`
+  - **caption:** Панорама как вход в текст: сначала город, потом уже его музыкальная жизнь!!!
 
 - **position:** after-block-2
   - **block:** Новый этап татарской музыки

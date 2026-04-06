@@ -34,9 +34,7 @@
       margin: 0 auto;
       padding: 24px 0 48px;
     }
-    .topbar {
-      margin-bottom: 20px;
-    }
+    .topbar { margin-bottom: 20px; }
     h1 { margin: 0 0 8px; font: 700 34px/1.05 Arial, sans-serif; }
     .lead { color: var(--muted); margin: 0; max-width: 900px; line-height: 1.5; font-family: Arial, sans-serif; }
     .layout {
@@ -54,7 +52,7 @@
       padding: 16px;
       font-family: Arial, sans-serif;
     }
-    .panel h2 { margin: 0 0 14px; font-size: 20px; }
+    .panel h2 { margin: 0 0 8px; font-size: 20px; }
     label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
     input, select, textarea, button {
       width: 100%;
@@ -77,14 +75,17 @@
       margin-top: 10px;
       font-family: Arial, sans-serif;
     }
-    .page-preview {
-      background: transparent;
-      min-width: 0;
+    .panel-mode {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(41,94,168,.08);
+      color: var(--editor-strong);
+      font: 12px/1.3 Arial, sans-serif;
     }
-    .intro {
-      max-width: 760px;
-      margin: 0 0 48px 120px;
-    }
+    .page-preview { background: transparent; min-width: 0; }
+    .intro { max-width: 760px; margin: 0 0 48px 120px; }
     .eyebrow {
       font: 12px/1.2 Arial, sans-serif;
       text-transform: uppercase;
@@ -188,10 +189,7 @@
       letter-spacing: 0;
       color: #4f483f;
     }
-    .chapter-body {
-      margin-left: 72px;
-      max-width: 760px;
-    }
+    .chapter-body { margin-left: 72px; max-width: 760px; }
     .chapter-title {
       position: absolute;
       left: -210px;
@@ -204,11 +202,7 @@
       color: #2d2924;
     }
     .blocks { display: grid; gap: 14px; }
-    .media-strip {
-      display: grid;
-      gap: 12px;
-      margin: 18px 0 18px;
-    }
+    .media-strip { display: grid; gap: 12px; margin: 18px 0 18px; }
     .media-card {
       border: 1px solid var(--line);
       background: rgba(255,255,255,.72);
@@ -216,11 +210,7 @@
       overflow: hidden;
       box-shadow: 0 8px 24px var(--shadow);
     }
-    .media-card img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
+    .media-card img { display: block; width: 100%; height: auto; }
     .media-caption {
       padding: 10px 12px 12px;
       font: 12px/1.35 Arial, sans-serif;
@@ -238,12 +228,7 @@
       overflow: hidden;
       box-shadow: 0 8px 24px var(--shadow);
     }
-    .video-frame {
-      aspect-ratio: 16 / 9;
-      width: 100%;
-      border: 0;
-      display: block;
-    }
+    .video-frame { aspect-ratio: 16 / 9; width: 100%; border: 0; display: block; }
     details.block {
       border: 1px solid var(--line);
       background: var(--card);
@@ -292,9 +277,7 @@
     .expand p { margin: 0; font-size: 17px; white-space: normal; }
     .markdown p { margin: 0 0 10px; }
     .markdown p:last-child { margin-bottom: 0; }
-    .editor-media {
-      position: relative;
-    }
+    .editor-media { position: relative; }
     .editor-toolbar {
       position: absolute;
       top: 12px;
@@ -336,13 +319,17 @@
       place-items: center;
       box-shadow: 0 4px 12px rgba(0,0,0,.06);
     }
-    .editor-empty {
-      font: 13px/1.45 Arial, sans-serif;
-      color: var(--muted);
-    }
     .editor-highlight {
       outline: 3px solid rgba(41,94,168,.2);
       scroll-margin-top: 40px;
+    }
+    .inline-text-toolbar {
+      position: static;
+      margin: 0 0 8px;
+      max-width: none;
+    }
+    .inline-text-toolbar button {
+      width: auto;
     }
     @media (max-width: 1200px) {
       .timeline { padding-right: 0; }
@@ -370,51 +357,59 @@
   <main class="page">
     <div class="topbar">
       <h1>Media admin</h1>
-      <p class="lead">Слева редактирование, справа сама страница в стиле превью. Медиа можно менять прямо по месту и потом сохранять в <code>media-placement.md</code>.</p>
+      <p class="lead">Слева редактор с двумя режимами, справа страница в стиле превью. Медиа можно менять по месту, текст можно открывать в отдельный режим редактирования.</p>
     </div>
 
     <div class="layout">
       <section class="panel">
-        <h2>Редактирование медиа</h2>
+        <h2 id="editorTitle">Редактирование медиа</h2>
+        <div class="panel-mode" id="editorModeLabel">Режим: медиа</div>
 
-        <div class="field">
-          <label for="chapter">Глава</label>
-          <select id="chapter"></select>
-        </div>
-
-        <div class="row">
+        <div id="mediaEditorFields">
           <div class="field">
-            <label for="position">Позиция</label>
-            <select id="position"></select>
+            <label for="chapter">Глава</label>
+            <select id="chapter"></select>
           </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="position">Позиция</label>
+              <select id="position"></select>
+            </div>
+            <div class="field">
+              <label for="type">Тип</label>
+              <select id="type">
+                <option value="image">Картинка</option>
+                <option value="youtube">YouTube / embed</option>
+                <option value="image-grid">Две картинки</option>
+              </select>
+            </div>
+          </div>
+
           <div class="field">
-            <label for="type">Тип</label>
-            <select id="type">
-              <option value="image">Картинка</option>
-              <option value="youtube">YouTube / embed</option>
-              <option value="image-grid">Две картинки</option>
-            </select>
+            <label for="block">Название блока (для ориентира)</label>
+            <input id="block" placeholder="например: Магди" />
           </div>
-        </div>
 
-        <div class="field">
-          <label for="block">Название блока (для ориентира)</label>
-          <input id="block" placeholder="например: Магди" />
-        </div>
+          <div class="field" id="srcField">
+            <label for="src">Ссылка / путь</label>
+            <input id="src" placeholder="https://... или kazan-panorama.jpg" />
+          </div>
 
-        <div class="field" id="srcField">
-          <label for="src">Ссылка / путь</label>
-          <input id="src" placeholder="https://... или kazan-panorama.jpg" />
-        </div>
+          <div class="field" id="itemsField" style="display:none">
+            <label for="items">Ссылки для image-grid (по одной на строку)</label>
+            <textarea id="items" placeholder="https://...&#10;https://..."></textarea>
+          </div>
 
-        <div class="field" id="itemsField" style="display:none">
-          <label for="items">Ссылки для image-grid (по одной на строку)</label>
-          <textarea id="items" placeholder="https://...&#10;https://..."></textarea>
-        </div>
+          <div class="field">
+            <label for="caption">Подпись</label>
+            <textarea id="caption" placeholder="Короткая подпись или пояснение"></textarea>
+          </div>
 
-        <div class="field">
-          <label for="caption">Подпись</label>
-          <textarea id="caption" placeholder="Короткая подпись или пояснение"></textarea>
+          <div class="actions">
+            <button class="primary" id="addBtn">Добавить элемент</button>
+            <button class="primary" id="saveBtn">Сохранить в media-placement.md</button>
+          </div>
         </div>
 
         <div id="textEditorFields" style="display:none">
@@ -438,16 +433,13 @@
             <label for="textExpand">Разворот</label>
             <textarea id="textExpand" placeholder="Текст разворота"></textarea>
           </div>
-        </div>
-
-        <div class="actions">
-          <button class="primary" id="addBtn">Добавить элемент</button>
-          <button class="primary" id="saveBtn">Сохранить в media-placement.md</button>
-          <button id="saveTextBtn" style="display:none">Сохранение текста временно отключено</button>
+          <div class="actions">
+            <button id="saveTextBtn">Сохранение текста временно отключено</button>
+          </div>
         </div>
 
         <div class="hint" id="statusHint">
-          Выбери место на странице справа или добавь элемент вручную слева, потом нажми <b>Сохранить в media-placement.md</b>.
+          Выбери элемент справа, и левая панель переключится в нужный режим. Сейчас безопасно работает только сохранение медиа.
         </div>
       </section>
 
@@ -455,7 +447,7 @@
         <section class="intro">
           <div class="eyebrow">Редактор превью</div>
           <h2 class="hero-title">Музыкальная жизнь Казани</h2>
-          <p class="hero-lead">Здесь показывается та же структура, что и в превью, но с редакторскими зонами для медиа.</p>
+          <p class="hero-lead">Здесь показывается та же структура, что и в превью, но с редакторскими зонами для медиа и текста.</p>
         </section>
         <section class="timeline" id="timeline"></section>
       </section>
@@ -465,6 +457,7 @@
   <script>
     const state = {};
     let editing = null;
+    let editorMode = 'media';
     let sidebarDatesByChapter = {};
     let textChapters = [];
 
@@ -478,8 +471,11 @@
     const itemsField = document.getElementById('itemsField');
     const srcField = document.getElementById('srcField');
     const statusHintEl = document.getElementById('statusHint');
+    const mediaEditorFieldsEl = document.getElementById('mediaEditorFields');
     const textEditorFieldsEl = document.getElementById('textEditorFields');
     const saveTextBtnEl = document.getElementById('saveTextBtn');
+    const editorTitleEl = document.getElementById('editorTitle');
+    const editorModeLabelEl = document.getElementById('editorModeLabel');
     const textChapterTitleEl = document.getElementById('textChapterTitle');
     const textKickerEl = document.getElementById('textKicker');
     const textBlockTitleEl = document.getElementById('textBlockTitle');
@@ -506,58 +502,6 @@
       }
       positionEl.innerHTML = options.map(option => `<option value="${option.value}">${option.label}</option>`).join('');
       positionEl.value = options.some(option => option.value === selectedValue) ? selectedValue : 'before-blocks';
-    }
-
-    typeEl.addEventListener('change', () => {
-      const isGrid = typeEl.value === 'image-grid';
-      itemsField.style.display = isGrid ? '' : 'none';
-      srcField.style.display = isGrid ? 'none' : '';
-    });
-
-    chapterEl.addEventListener('change', () => {
-      rebuildPositionOptions(chapterEl.value, 'before-blocks');
-    });
-
-    function setStatus(text) {
-      statusHintEl.innerHTML = text;
-    }
-
-    function setEditorMode(mode) {
-      const mediaMode = mode !== 'text';
-      chapterEl.closest('.field').style.display = mediaMode ? '' : 'none';
-      positionEl.closest('.field').style.display = mediaMode ? '' : 'none';
-      typeEl.closest('.field').style.display = mediaMode ? '' : 'none';
-      blockEl.closest('.field').style.display = mediaMode ? '' : 'none';
-      srcField.style.display = mediaMode && typeEl.value !== 'image-grid' ? '' : 'none';
-      itemsField.style.display = mediaMode && typeEl.value === 'image-grid' ? '' : 'none';
-      captionEl.closest('.field').style.display = mediaMode ? '' : 'none';
-      document.getElementById('addBtn').style.display = mediaMode ? '' : 'none';
-      document.getElementById('saveBtn').style.display = mediaMode ? '' : 'none';
-      textEditorFieldsEl.style.display = mode === 'text' ? '' : 'none';
-      saveTextBtnEl.style.display = mode === 'text' ? '' : 'none';
-    }
-
-    function isTextEditing() {
-      return Boolean(editing && editing.kind === 'text');
-    }
-
-    function resetForm() {
-      editing = null;
-      if (textChapters.length) chapterEl.value = textChapters[0].title;
-      rebuildPositionOptions(chapterEl.value, 'before-blocks');
-      setEditorMode('media');
-      textChapterTitleEl.value = '';
-      textKickerEl.value = '';
-      textBlockTitleEl.value = '';
-      textMainEl.value = '';
-      textExpandEl.value = '';
-      typeEl.value = 'image';
-      blockEl.value = '';
-      srcEl.value = '';
-      itemsEl.value = '';
-      captionEl.value = '';
-      typeEl.dispatchEvent(new Event('change'));
-      document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
     }
 
     function normalizeMediaPath(value) {
@@ -604,12 +548,53 @@
       return plain.slice(0, 90).trim() + (plain.length > 90 ? '…' : '');
     }
 
+    function setStatus(text) {
+      statusHintEl.innerHTML = text;
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
+    }
+
+    function setEditorMode(mode) {
+      editorMode = mode;
+      const mediaMode = mode === 'media';
+      mediaEditorFieldsEl.style.display = mediaMode ? '' : 'none';
+      textEditorFieldsEl.style.display = mediaMode ? 'none' : '';
+      srcField.style.display = mediaMode && typeEl.value !== 'image-grid' ? '' : 'none';
+      itemsField.style.display = mediaMode && typeEl.value === 'image-grid' ? '' : 'none';
+      editorTitleEl.textContent = mediaMode ? 'Редактирование медиа' : 'Редактирование текста';
+      editorModeLabelEl.textContent = mediaMode ? 'Режим: медиа' : 'Режим: текст';
+    }
+
+    function resetForm() {
+      editing = null;
+      if (textChapters.length) chapterEl.value = textChapters[0].title;
+      rebuildPositionOptions(chapterEl.value, 'before-blocks');
+      typeEl.value = 'image';
+      blockEl.value = '';
+      srcEl.value = '';
+      itemsEl.value = '';
+      captionEl.value = '';
+      textChapterTitleEl.value = '';
+      textKickerEl.value = '';
+      textBlockTitleEl.value = '';
+      textMainEl.value = '';
+      textExpandEl.value = '';
+      typeEl.dispatchEvent(new Event('change'));
+      clearHighlights();
+      setEditorMode('media');
+    }
+
+    function isTextEditing() {
+      return Boolean(editing && editing.kind === 'text');
+    }
+
     function parseSidebarDates(md) {
       const lines = md.split('\n');
       const result = {};
       let currentChapter = null;
       let currentGroup = null;
-
       for (const raw of lines) {
         const line = raw.replace(/\r$/, '');
         if (line.startsWith('# ')) {
@@ -633,7 +618,6 @@
           result[currentChapter][currentGroup]?.push(line.slice(2).trim());
         }
       }
-
       return result;
     }
 
@@ -757,17 +741,15 @@
       `;
     }
 
-    function focusForm(chapter, position, itemIndex = null) {
+    function focusMediaForm(chapter, position) {
+      resetForm();
       chapterEl.value = chapter;
       rebuildPositionOptions(chapter, position);
-      if (itemIndex === null) {
-        resetForm();
-        chapterEl.value = chapter;
-        rebuildPositionOptions(chapter, position);
-      }
+      setEditorMode('media');
       document.querySelector(`[data-slot="${chapter}::${position}"]`)?.classList.add('editor-highlight');
       chapterEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       chapterEl.focus();
+      setStatus('Заполни поля слева для новой медиа-вставки, потом нажми <b>Добавить элемент</b>.');
     }
 
     function editTextBlock(chapterIndex, blockIndex) {
@@ -780,16 +762,17 @@
       textBlockTitleEl.value = block.title || '';
       textMainEl.value = block.main || '';
       textExpandEl.value = block.expand || '';
-      document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
+      clearHighlights();
       document.querySelector(`[data-text-block-key="${chapterIndex}::${blockIndex}"]`)?.classList.add('editor-highlight');
-      setStatus('Редактируй текст слева и нажми <b>Сохранить в text-draft.md</b>. Кнопка «Добавить элемент» тут не нужна.');
+      setStatus('Текстовый режим активен. Здесь будут правки текста; сохранение текста пока отключено, чтобы не портить структуру файла.');
       textChapterTitleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       textChapterTitleEl.focus();
     }
 
     function editItem(chapter, index) {
       const item = state[chapter][index];
-      editing = { chapter, index };
+      editing = { kind: 'media', chapter, index };
+      setEditorMode('media');
       chapterEl.value = chapter;
       rebuildPositionOptions(chapter, item.position);
       typeEl.value = item.type;
@@ -798,9 +781,9 @@
       srcEl.value = item.src || '';
       itemsEl.value = (item.items || []).join('\n');
       typeEl.dispatchEvent(new Event('change'));
-      document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
+      clearHighlights();
       document.querySelector(`[data-item-key="${chapter}::${index}"]`)?.classList.add('editor-highlight');
-      setStatus('Редактируй поля слева и нажми <b>Добавить элемент</b>, потом <b>Сохранить в media-placement.md</b>.');
+      setStatus('Медиа-режим активен. Измени поля слева, потом нажми <b>Добавить элемент</b> и <b>Сохранить в media-placement.md</b>.');
       chapterEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
@@ -811,12 +794,12 @@
     }
 
     function addOrUpdate() {
-      const chapter = chapterEl.value;
-      if (isTextEditing()) {
-        setStatus('Сейчас открыт текстовый режим. Нажми <b>Сохранить в text-draft.md</b>.');
+      if (editorMode !== 'media') {
+        setStatus('Сейчас открыт текстовый режим. Для медиа сначала выбери медиа-элемент или плюсик на странице справа.');
         return;
       }
 
+      const chapter = chapterEl.value;
       const item = {
         position: positionEl.value,
         type: typeEl.value,
@@ -829,7 +812,7 @@
         item.src = normalizeMediaPath(srcEl.value);
       }
 
-      if (editing) {
+      if (editing && editing.kind === 'media') {
         state[editing.chapter][editing.index] = item;
       } else {
         state[chapter].push(item);
@@ -846,7 +829,7 @@
       for (const chapterObj of textChapters) {
         const chapter = chapterObj.title;
         const items = state[chapter];
-        if (!items.length) continue;
+        if (!items || !items.length) continue;
         out += `# ${chapter}\n\n`;
         for (const item of items) {
           out += `- **position:** ${item.position}\n`;
@@ -935,7 +918,27 @@
     }
 
     async function saveTextDraft() {
-      setStatus('Сохранение текста временно отключено. Текущий вариант портил структуру <code>text-draft.md</code>, поэтому я его остановил.');
+      setStatus('Сохранение текста временно отключено. Сначала нужно сделать безопасный точечный способ записи, чтобы не ломать структуру <code>text-draft.md</code>.');
+    }
+
+    function renderDateTrack(chapterTitle) {
+      const groups = sidebarDatesByChapter[chapterTitle] || {};
+      const order = ['Татарские', 'Россия', 'СССР', 'Мир'];
+      return `
+        <div class="date-track">
+          <div class="date-era">${escapeHtml((groups && groups.era) || '')}</div>
+          ${order.map(groupName => {
+            const items = groups[groupName] || [];
+            if (!items.length) return '';
+            return `
+              <div class="date-group">
+                <div class="date-group-label">${escapeHtml(groupName)}</div>
+                ${items.map(item => `<div class="date-item">${inlineMarkdownToHtml(item)}</div>`).join('')}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
     }
 
     function renderAdminPreview() {
@@ -950,7 +953,7 @@
             <div class="blocks">
               ${chapter.blocks.map((block, blockIdx) => `
                 <div data-text-block-key="${idx}::${blockIdx}">
-                  <div class="editor-toolbar" style="position:static; margin:0 0 8px; max-width:none;">
+                  <div class="editor-toolbar inline-text-toolbar">
                     <button type="button" data-edit-text="${idx}::${blockIdx}">Редактировать текст</button>
                   </div>
                   <details class="block">
@@ -986,8 +989,7 @@
       root.querySelectorAll('[data-add-slot]').forEach(btn => {
         btn.onclick = () => {
           const [chapter, position] = btn.dataset.addSlot.split('::');
-          focusForm(chapter, position);
-          setStatus('Заполни поля слева для новой медиа-вставки, потом нажми <b>Добавить элемент</b>.');
+          focusMediaForm(chapter, position);
         };
       });
       root.querySelectorAll('[data-edit-text]').forEach(btn => {
@@ -1039,16 +1041,25 @@
         console.error(e);
       }
       renderAdminPreview();
-      rebuildPositionOptions(chapterEl.value, positionEl.value);
+      resetForm();
+      setStatus('Выбери элемент справа, и левая панель переключится в нужный режим. Сейчас безопасно работает только сохранение медиа.');
     }
+
+    typeEl.addEventListener('change', () => {
+      const isGrid = typeEl.value === 'image-grid';
+      itemsField.style.display = editorMode === 'media' && isGrid ? '' : 'none';
+      srcField.style.display = editorMode === 'media' && !isGrid ? '' : 'none';
+    });
+
+    chapterEl.addEventListener('change', () => {
+      rebuildPositionOptions(chapterEl.value, 'before-blocks');
+    });
 
     document.getElementById('addBtn').onclick = addOrUpdate;
     document.getElementById('saveBtn').onclick = saveToFile;
     saveTextBtnEl.onclick = saveTextDraft;
 
-    resetForm();
     loadExisting();
-    setEditorMode('media');
   </script>
 </body>
 </html>
