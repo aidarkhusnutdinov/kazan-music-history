@@ -443,7 +443,7 @@
         <div class="actions">
           <button class="primary" id="addBtn">Добавить элемент</button>
           <button class="primary" id="saveBtn">Сохранить в media-placement.md</button>
-          <button id="saveTextBtn" style="display:none">Сохранить в text-draft.md</button>
+          <button id="saveTextBtn" style="display:none">Сохранение текста временно отключено</button>
         </div>
 
         <div class="hint" id="statusHint">
@@ -535,6 +535,10 @@
       document.getElementById('saveBtn').style.display = mediaMode ? '' : 'none';
       textEditorFieldsEl.style.display = mode === 'text' ? '' : 'none';
       saveTextBtnEl.style.display = mode === 'text' ? '' : 'none';
+    }
+
+    function isTextEditing() {
+      return Boolean(editing && editing.kind === 'text');
     }
 
     function resetForm() {
@@ -778,7 +782,7 @@
       textExpandEl.value = block.expand || '';
       document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
       document.querySelector(`[data-text-block-key="${chapterIndex}::${blockIndex}"]`)?.classList.add('editor-highlight');
-      setStatus('Редактируй текст слева и нажми <b>Сохранить в text-draft.md</b>.');
+      setStatus('Редактируй текст слева и нажми <b>Сохранить в text-draft.md</b>. Кнопка «Добавить элемент» тут не нужна.');
       textChapterTitleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       textChapterTitleEl.focus();
     }
@@ -796,7 +800,7 @@
       typeEl.dispatchEvent(new Event('change'));
       document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
       document.querySelector(`[data-item-key="${chapter}::${index}"]`)?.classList.add('editor-highlight');
-      setStatus('Редактируй поля слева и нажми <b>Добавить элемент</b>, чтобы применить изменения, потом сохрани файл.');
+      setStatus('Редактируй поля слева и нажми <b>Добавить элемент</b>, потом <b>Сохранить в media-placement.md</b>.');
       chapterEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
@@ -808,6 +812,11 @@
 
     function addOrUpdate() {
       const chapter = chapterEl.value;
+      if (isTextEditing()) {
+        setStatus('Сейчас открыт текстовый режим. Нажми <b>Сохранить в text-draft.md</b>.');
+        return;
+      }
+
       const item = {
         position: positionEl.value,
         type: typeEl.value,
@@ -926,29 +935,7 @@
     }
 
     async function saveTextDraft() {
-      if (!editing || editing.kind !== 'text') return;
-      const chapter = textChapters[editing.chapterIndex];
-      const block = chapter.blocks[editing.blockIndex];
-      chapter.title = textChapterTitleEl.value.trim();
-      block.kicker = textKickerEl.value.trim();
-      block.title = textBlockTitleEl.value.trim();
-      block.main = textMainEl.value.trim();
-      block.expand = textExpandEl.value.trim();
-      try {
-        const res = await fetch('/save-text-draft', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chapters: textChapters })
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
-        syncChapterOptions();
-        renderAdminPreview();
-        setStatus('Сохранено в <code>text-draft.md</code>.');
-      } catch (e) {
-        console.error(e);
-        setStatus(`Не удалось сохранить text-draft.md: <code>${String(e.message || e)}</code>`);
-      }
+      setStatus('Сохранение текста временно отключено. Текущий вариант портил структуру <code>text-draft.md</code>, поэтому я его остановил.');
     }
 
     function renderAdminPreview() {
@@ -1061,6 +1048,7 @@
 
     resetForm();
     loadExisting();
+    setEditorMode('media');
   </script>
 </body>
 </html>
