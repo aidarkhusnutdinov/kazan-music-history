@@ -1,0 +1,12 @@
+{
+  "chapters": {
+    "1. Казань начала ХХ века": [
+      {
+        "position": "before-blocks",
+        "type": "image",
+        "src": "./kazan-panorama.jpg",
+        "caption": "save test from debug"
+      }
+    ]
+  }
+}

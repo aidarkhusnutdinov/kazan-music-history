@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Media admin — Kazan music</title>
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --paper: #fbf8f2;
+      --line: #d7cfc2;
+      --text: #171717;
+      --muted: #6f675d;
+      --accent: #295ea8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .page {
+      width: min(1200px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+    h1 { margin: 0 0 8px; font-size: 34px; }
+    .lead { color: var(--muted); margin: 0 0 20px; max-width: 850px; line-height: 1.5; }
+    .layout {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    .panel, .preview {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .panel h2, .preview h2 { margin: 0 0 14px; font-size: 20px; }
+    label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+    input, select, textarea, button {
+      width: 100%;
+      font: inherit;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: white;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .field { margin-bottom: 12px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .actions { display: grid; gap: 10px; margin-top: 14px; }
+    button {
+      cursor: pointer;
+      background: #fff;
+    }
+    button.primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-top: 10px;
+    }
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: white;
+    }
+    .item strong { display: block; margin-bottom: 6px; }
+    .item-meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .item-actions { display: flex; gap: 8px; }
+    .item-actions button { width: auto; }
+    .export-box {
+      white-space: pre-wrap;
+      font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      max-height: 70vh;
+      overflow: auto;
+    }
+    .small { font-size: 12px; color: var(--muted); }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>Media admin</h1>
+    <p class="lead">Простая админка для расстановки картинок и видео. Можно добавлять элементы, выбирать, после какого блока они стоят, и экспортировать новый <code>media-placement.md</code>.</p>
+
+    <div class="layout">
+      <section class="panel">
+        <h2>Добавить / изменить элемент</h2>
+
+        <div class="field">
+          <label for="chapter">Глава</label>
+          <select id="chapter"></select>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="position">Позиция</label>
+            <select id="position">
+              <option value="before-blocks">Перед блоками главы</option>
+              <option value="after-block-0">После блока 1</option>
+              <option value="after-block-1">После блока 2</option>
+              <option value="after-block-2">После блока 3</option>
+              <option value="after-block-3">После блока 4</option>
+              <option value="after-block-4">После блока 5</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="type">Тип</label>
+            <select id="type">
+              <option value="image">Картинка</option>
+              <option value="youtube">YouTube / embed</option>
+              <option value="image-grid">Две картинки</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="block">Название блока (для ориентира)</label>
+          <input id="block" placeholder="например: Магди" />
+        </div>
+
+        <div class="field" id="srcField">
+          <label for="src">Ссылка / путь</label>
+          <input id="src" placeholder="https://... или ./kazan-panorama.jpg" />
+        </div>
+
+        <div class="field" id="itemsField" style="display:none">
+          <label for="items">Ссылки для image-grid (по одной на строку)</label>
+          <textarea id="items" placeholder="https://...&#10;https://..."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="caption">Подпись</label>
+          <textarea id="caption" placeholder="Короткая подпись или пояснение"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="addBtn">Добавить элемент</button>
+          <button id="exportBtn">Собрать media-placement.md</button>
+          <button id="downloadBtn">Скачать media-placement.md</button>
+          <button id="openPreviewBtn">Открыть превью</button>
+        </div>
+
+        <div class="hint">
+          Рабочая схема: открыть страницу, поправить список медиа, нажать <b>Собрать</b> или <b>Скачать media-placement.md</b>. Эта версия ничего не пишет в проект автоматически — только собирает итоговый markdown.
+        </div>
+      </section>
+
+      <section class="preview">
+        <h2>Текущая расстановка</h2>
+        <div id="itemsList"></div>
+        <h2 style="margin-top:18px">Export</h2>
+        <div class="small" style="margin-bottom:8px">Это текст будущего <code>media-placement.md</code>.</div>
+        <div class="export-box" id="exportBox"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const CHAPTERS = [
+      '1. Казань начала ХХ века',
+      '2. Начало ХХ века — время активного взаимопроникновения русской и татарской музыкальных культур',
+      '3. Опера и балет до 1930-х',
+      '4. Татарская музыка в Советском Союзе. Начало',
+      '5. Как работает новая система',
+      '6. Рок-музыка в Казани',
+      '7. Казанская музыка в 1990-е и 2000-е',
+      '8. Татарская эстрада и альтернатива'
+    ];
+
+    const state = {};
+    let editing = null;
+
+    const chapterEl = document.getElementById('chapter');
+    const positionEl = document.getElementById('position');
+    const typeEl = document.getElementById('type');
+    const blockEl = document.getElementById('block');
+    const srcEl = document.getElementById('src');
+    const itemsEl = document.getElementById('items');
+    const captionEl = document.getElementById('caption');
+    const itemsField = document.getElementById('itemsField');
+    const srcField = document.getElementById('srcField');
+    const itemsListEl = document.getElementById('itemsList');
+    const exportBoxEl = document.getElementById('exportBox');
+
+    CHAPTERS.forEach(ch => {
+      const option = document.createElement('option');
+      option.value = ch;
+      option.textContent = ch;
+      chapterEl.appendChild(option);
+      state[ch] = [];
+    });
+
+    typeEl.addEventListener('change', () => {
+      const isGrid = typeEl.value === 'image-grid';
+      itemsField.style.display = isGrid ? '' : 'none';
+      srcField.style.display = isGrid ? 'none' : '';
+    });
+
+    function resetForm() {
+      editing = null;
+      positionEl.value = 'before-blocks';
+      typeEl.value = 'image';
+      blockEl.value = '';
+      srcEl.value = '';
+      itemsEl.value = '';
+      captionEl.value = '';
+      typeEl.dispatchEvent(new Event('change'));
+    }
+
+    function addOrUpdate() {
+      const chapter = chapterEl.value;
+      const item = {
+        position: positionEl.value,
+        type: typeEl.value,
+        block: blockEl.value.trim(),
+        caption: captionEl.value.trim()
+      };
+      if (item.type === 'image-grid') {
+        item.items = itemsEl.value.split('\n').map(s => s.trim()).filter(Boolean);
+      } else {
+        item.src = srcEl.value.trim();
+      }
+
+      if (editing) {
+        const arr = state[editing.chapter];
+        arr[editing.index] = item;
+      } else {
+        state[chapter].push(item);
+      }
+      resetForm();
+      renderState();
+    }
+
+    function editItem(chapter, index) {
+      const item = state[chapter][index];
+      editing = { chapter, index };
+      chapterEl.value = chapter;
+      positionEl.value = item.position;
+      typeEl.value = item.type;
+      blockEl.value = item.block || '';
+      captionEl.value = item.caption || '';
+      srcEl.value = item.src || '';
+      itemsEl.value = (item.items || []).join('\n');
+      typeEl.dispatchEvent(new Event('change'));
+    }
+
+    function removeItem(chapter, index) {
+      state[chapter].splice(index, 1);
+      renderState();
+    }
+
+    function renderMd() {
+      let out = '# Media placement\n\n';
+      out += 'Этот файл описывает, какие медиа вставляются в страницу, где именно они стоят и зачем.\n\n';
+      out += '---\n\n';
+      for (const chapter of CHAPTERS) {
+        const items = state[chapter];
+        if (!items.length) continue;
+        out += `# ${chapter}\n\n`;
+        for (const item of items) {
+          out += `- **position:** ${item.position}\n`;
+          if (item.block) out += `  - **block:** ${item.block}\n`;
+          out += `  - **type:** ${item.type}\n`;
+          if (item.type === 'image-grid') {
+            out += `  - **items:**\n`;
+            for (const src of item.items || []) out += `    - \`${src}\`\n`;
+          } else {
+            out += `  - **src:** \`${item.src || ''}\`\n`;
+          }
+          if (item.caption) out += `  - **caption:** ${item.caption}\n`;
+          out += '\n';
+        }
+        out += '---\n\n';
+      }
+      return out.trim();
+    }
+
+    function renderState() {
+      itemsListEl.innerHTML = '';
+      for (const chapter of CHAPTERS) {
+        const items = state[chapter];
+        if (!items.length) continue;
+        const h = document.createElement('div');
+        h.className = 'small';
+        h.style.margin = '12px 0 8px';
+        h.textContent = chapter;
+        itemsListEl.appendChild(h);
+
+        items.forEach((item, index) => {
+          const div = document.createElement('div');
+          div.className = 'item';
+          div.innerHTML = `
+            <strong>${item.type}</strong>
+            <div class="item-meta">${item.position}${item.block ? ' · ' + item.block : ''}</div>
+            <div class="small">${item.type === 'image-grid' ? (item.items || []).join(' | ') : (item.src || '')}</div>
+            ${item.caption ? `<div style="margin-top:8px">${item.caption}</div>` : ''}
+            <div class="item-actions" style="margin-top:10px">
+              <button data-edit="${chapter}::${index}">Edit</button>
+              <button data-remove="${chapter}::${index}">Remove</button>
+            </div>
+          `;
+          itemsListEl.appendChild(div);
+        });
+      }
+      exportBoxEl.textContent = renderMd();
+
+      itemsListEl.querySelectorAll('[data-edit]').forEach(btn => {
+        btn.onclick = () => {
+          const [chapter, index] = btn.dataset.edit.split('::');
+          editItem(chapter, Number(index));
+        };
+      });
+      itemsListEl.querySelectorAll('[data-remove]').forEach(btn => {
+        btn.onclick = () => {
+          const [chapter, index] = btn.dataset.remove.split('::');
+          removeItem(chapter, Number(index));
+        };
+      });
+    }
+
+    async function loadExisting() {
+      try {
+        const res = await fetch('./media-placement.md', { cache: 'no-store' });
+        if (!res.ok) return;
+        const text = await res.text();
+        const lines = text.split('\n');
+        let currentChapter = null;
+        let currentItem = null;
+        let itemsMode = false;
+
+        const pushCurrent = () => {
+          if (currentChapter && currentItem) state[currentChapter].push(currentItem);
+          currentItem = null;
+          itemsMode = false;
+        };
+
+        for (const raw of lines) {
+          const line = raw.replace(/\r$/, '');
+          if (line.startsWith('# ')) {
+            const title = line.slice(2).trim();
+            if (!/^\d+\./.test(title)) continue;
+            pushCurrent();
+            currentChapter = title;
+            continue;
+          }
+          if (!currentChapter) continue;
+          if (line.startsWith('- **position:**')) {
+            pushCurrent();
+            currentItem = { position: line.split('**position:**')[1].trim(), type: '', block: '', caption: '' };
+            continue;
+          }
+          if (!currentItem) continue;
+          if (line.includes('**block:**')) currentItem.block = line.split('**block:**')[1].trim();
+          else if (line.includes('**type:**')) currentItem.type = line.split('**type:**')[1].trim();
+          else if (line.includes('**src:**')) currentItem.src = line.split('**src:**')[1].trim().replace(/^`|`$/g, '');
+          else if (line.includes('**caption:**')) currentItem.caption = line.split('**caption:**')[1].trim();
+          else if (line.includes('**items:**')) { currentItem.items = []; itemsMode = true; }
+          else if (itemsMode && line.trim().startsWith('- `')) currentItem.items.push(line.trim().slice(3, -1));
+        }
+        pushCurrent();
+      } catch (e) {
+        console.error(e);
+      }
+      renderState();
+    }
+
+    document.getElementById('addBtn').onclick = addOrUpdate;
+    document.getElementById('exportBtn').onclick = renderState;
+    document.getElementById('openPreviewBtn').onclick = () => {
+      window.open('./preview.html', '_blank');
+    };
+    document.getElementById('downloadBtn').onclick = () => {
+      const blob = new Blob([renderMd()], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'media-placement.md';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    resetForm();
+    loadExisting();
+  </script>
+</body>
+</html>
