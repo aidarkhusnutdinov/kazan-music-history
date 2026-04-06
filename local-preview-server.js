@@ -78,30 +78,79 @@ function renderMd(data) {
   return `${out.join('\n').trim()}\n`;
 }
 
-function renderTextDraft(chapters) {
-  const out = [];
-  for (const chapter of Array.isArray(chapters) ? chapters : []) {
-    out.push(`# ${chapter.title || ''}`);
-    out.push('');
-    for (const block of Array.isArray(chapter.blocks) ? chapter.blocks : []) {
-      out.push(`## ${block.kicker || ''}`);
-      if (block.title) {
-        out.push(`### ${block.title}`);
-      }
-      if (block.main) {
-        out.push(block.main.trim());
-      }
-      out.push('');
-      if (block.expand) {
-        out.push('**Разворот:**');
-        out.push(block.expand.trim());
-        out.push('');
-      }
+function patchTextDraftBlock(source, payload) {
+  const { chapterIndex, blockIndex, title, main, expand } = payload || {};
+  const lines = source.split('\n');
+  const chapters = [];
+  let currentChapter = null;
+  let currentBlock = null;
+
+  const closeBlock = (endLine) => {
+    if (currentBlock) {
+      currentBlock.endLine = endLine;
+      currentChapter.blocks.push(currentBlock);
+      currentBlock = null;
     }
-    out.push('---');
-    out.push('');
+  };
+
+  const closeChapter = () => {
+    if (currentChapter) {
+      chapters.push(currentChapter);
+      currentChapter = null;
+    }
+  };
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line.startsWith('# ') && /^\d+\./.test(line.slice(2).trim())) {
+      closeBlock(i - 1);
+      closeChapter();
+      currentChapter = { startLine: i, blocks: [] };
+      continue;
+    }
+    if (!currentChapter) continue;
+    if (line.startsWith('## ')) {
+      closeBlock(i - 1);
+      currentBlock = { startLine: i };
+      continue;
+    }
+    if (line.trim() === '---') {
+      closeBlock(i - 1);
+      closeChapter();
+    }
   }
-  return `${out.join('\n').trim()}\n`;
+  closeBlock(lines.length - 1);
+  closeChapter();
+
+  const chapter = chapters[chapterIndex];
+  if (!chapter) throw new Error('Chapter not found');
+  const block = chapter.blocks[blockIndex];
+  if (!block) throw new Error('Block not found');
+
+  const blockLines = lines.slice(block.startLine, block.endLine + 1);
+  const kickerLine = blockLines[0] || '';
+  let titleIdx = blockLines.findIndex(line => line.startsWith('### '));
+  if (titleIdx === -1) titleIdx = 1;
+  let expandMarkerIdx = blockLines.findIndex(line => line.startsWith('**Разворот:**'));
+
+  const nextSectionStart = expandMarkerIdx === -1 ? blockLines.length : expandMarkerIdx;
+  const newBlockLines = [];
+  newBlockLines.push(kickerLine);
+  newBlockLines.push(`### ${String(title || '').trim()}`);
+  newBlockLines.push(String(main || '').trim());
+  newBlockLines.push('');
+  if (expandMarkerIdx !== -1 || String(expand || '').trim()) {
+    newBlockLines.push('**Разворот:**');
+    if (String(expand || '').trim()) newBlockLines.push(String(expand || '').trim());
+    newBlockLines.push('');
+  }
+
+  const patched = [
+    ...lines.slice(0, block.startLine),
+    ...newBlockLines,
+    ...lines.slice(block.endLine + 1)
+  ];
+  return patched.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 
 function safeJoin(base, targetPath) {
@@ -134,7 +183,7 @@ function serveFile(res, filePath) {
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${HOST}:${PORT}`);
 
-  if (req.method === 'POST' && (url.pathname === '/save-media' || url.pathname === '/save-text-draft')) {
+  if (req.method === 'POST' && (url.pathname === '/save-media' || url.pathname === '/save-text-draft-block')) {
     let body = '';
     req.on('data', chunk => {
       body += chunk;
@@ -150,7 +199,9 @@ const server = http.createServer((req, res) => {
           sendJson(res, 200, { ok: true, target: 'media-placement.md' });
           return;
         }
-        fs.writeFileSync(TEXT_DRAFT_MD, renderTextDraft(data.chapters), 'utf8');
+        const source = fs.readFileSync(TEXT_DRAFT_MD, 'utf8');
+        const patched = patchTextDraftBlock(source, data);
+        fs.writeFileSync(TEXT_DRAFT_MD, patched, 'utf8');
         sendJson(res, 200, { ok: true, target: 'text-draft.md' });
       } catch (error) {
         sendJson(res, 500, { ok: false, error: String(error.message || error) });

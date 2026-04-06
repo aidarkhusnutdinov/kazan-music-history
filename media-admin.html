@@ -415,11 +415,11 @@
         <div id="textEditorFields" style="display:none">
           <div class="field">
             <label for="textChapterTitle">Название главы</label>
-            <input id="textChapterTitle" placeholder="Название главы" />
+            <input id="textChapterTitle" placeholder="Название главы" disabled />
           </div>
           <div class="field">
             <label for="textKicker">Кикер блока</label>
-            <input id="textKicker" placeholder="Кикер блока" />
+            <input id="textKicker" placeholder="Кикер блока" disabled />
           </div>
           <div class="field">
             <label for="textBlockTitle">Заголовок блока</label>
@@ -434,7 +434,7 @@
             <textarea id="textExpand" placeholder="Текст разворота"></textarea>
           </div>
           <div class="actions">
-            <button id="saveTextBtn">Сохранение текста временно отключено</button>
+            <button id="saveTextBtn">Сохранить в text-draft.md</button>
           </div>
         </div>
 
@@ -764,7 +764,7 @@
       textExpandEl.value = block.expand || '';
       clearHighlights();
       document.querySelector(`[data-text-block-key="${chapterIndex}::${blockIndex}"]`)?.classList.add('editor-highlight');
-      setStatus('Текстовый режим активен. Здесь будут правки текста; сохранение текста пока отключено, чтобы не портить структуру файла.');
+      setStatus('Текстовый режим активен. Можно править заголовок блока, основной текст и разворот, затем сохранить в <code>text-draft.md</code>.');
       textChapterTitleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       textChapterTitleEl.focus();
     }
@@ -918,7 +918,35 @@
     }
 
     async function saveTextDraft() {
-      setStatus('Сохранение текста временно отключено. Сначала нужно сделать безопасный точечный способ записи, чтобы не ломать структуру <code>text-draft.md</code>.');
+      if (!editing || editing.kind !== 'text') {
+        setStatus('Сначала выбери текстовый блок справа.');
+        return;
+      }
+      try {
+        const res = await fetch('/save-text-draft-block', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chapterIndex: editing.chapterIndex,
+            blockIndex: editing.blockIndex,
+            title: textBlockTitleEl.value.trim(),
+            main: textMainEl.value.trim(),
+            expand: textExpandEl.value.trim()
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        const block = textChapters[editing.chapterIndex].blocks[editing.blockIndex];
+        block.title = textBlockTitleEl.value.trim();
+        block.main = textMainEl.value.trim();
+        block.expand = textExpandEl.value.trim();
+        renderAdminPreview();
+        setEditorMode('text');
+        setStatus('Сохранено в <code>text-draft.md</code>.');
+      } catch (e) {
+        console.error(e);
+        setStatus(`Не удалось сохранить text-draft.md: <code>${String(e.message || e)}</code>`);
+      }
     }
 
     function renderDateTrack(chapterTitle) {
