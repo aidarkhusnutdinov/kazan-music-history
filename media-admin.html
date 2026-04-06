@@ -26,66 +26,83 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.55;
+      overflow-x: hidden;
     }
     a { color: var(--link); text-decoration: none; border-bottom: 1px solid rgba(41,94,168,.28); }
     a:hover { border-bottom-color: rgba(41,94,168,.8); }
     .page {
-      width: min(1560px, calc(100vw - 32px));
-      margin: 0 auto;
-      padding: 24px 0 48px;
+      width: 100%;
+      margin: 0;
+      padding: 20px 16px 48px;
     }
     .topbar { margin-bottom: 20px; }
     h1 { margin: 0 0 8px; font: 700 34px/1.05 Arial, sans-serif; }
     .lead { color: var(--muted); margin: 0; max-width: 900px; line-height: 1.5; font-family: Arial, sans-serif; }
     .layout {
       display: grid;
-      grid-template-columns: 320px minmax(0, 1fr);
-      gap: 32px;
+      grid-template-columns: minmax(520px, 42%) minmax(0, 58%);
+      gap: clamp(18px, 2vw, 28px);
       align-items: start;
+      width: 100%;
     }
     .panel {
       position: sticky;
-      top: 16px;
+      top: 12px;
+      align-self: start;
       background: var(--paper);
       border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px;
+      border-radius: 28px;
+      padding: 32px;
       font-family: Arial, sans-serif;
+      width: 100%;
+      max-width: none;
+      margin: 0;
     }
-    .panel h2 { margin: 0 0 8px; font-size: 20px; }
-    label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+    .panel h2 { margin: 0 0 12px; font-size: 42px; }
+    label { display: block; font-size: 24px; color: var(--muted); margin: 0 0 10px; }
     input, select, textarea, button {
       width: 100%;
       font: inherit;
       border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 12px;
+      border-radius: 18px;
+      padding: 18px 20px;
       background: white;
+      font-size: 28px;
     }
-    textarea { min-height: 90px; resize: vertical; }
-    .field { margin-bottom: 12px; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .actions { display: grid; gap: 10px; margin-top: 14px; }
+    textarea { min-height: 220px; resize: vertical; }
+    .field { margin-bottom: 24px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .actions { display: grid; gap: 18px; margin-top: 20px; }
     button { cursor: pointer; background: #fff; }
     button.primary { background: var(--accent); color: white; border-color: var(--accent); }
     .hint {
-      font-size: 12px;
+      font-size: 20px;
       color: var(--muted);
-      line-height: 1.45;
-      margin-top: 10px;
+      line-height: 1.6;
+      margin-top: 18px;
       font-family: Arial, sans-serif;
     }
     .panel-mode {
       display: inline-block;
-      margin-bottom: 12px;
-      padding: 4px 10px;
+      margin-bottom: 18px;
+      padding: 10px 18px;
       border-radius: 999px;
       background: rgba(41,94,168,.08);
       color: var(--editor-strong);
-      font: 12px/1.3 Arial, sans-serif;
+      font: 20px/1.3 Arial, sans-serif;
     }
-    .page-preview { background: transparent; min-width: 0; }
-    .intro { max-width: 760px; margin: 0 0 48px 120px; }
+    .page-preview {
+      background: transparent;
+      min-width: 0;
+      max-width: 100%;
+      width: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+    .intro {
+      max-width: 920px;
+      margin: 0 0 52px 90px;
+    }
     .eyebrow {
       font: 12px/1.2 Arial, sans-serif;
       text-transform: uppercase;
@@ -94,21 +111,21 @@
       margin-bottom: 10px;
     }
     .hero-title {
-      font-size: clamp(34px, 5vw, 68px);
+      font-size: clamp(40px, 4vw, 70px);
       line-height: .98;
       margin: 0 0 16px;
       font-weight: 700;
     }
     .hero-lead {
-      font-size: 18px;
+      font-size: 21px;
       color: #3d3934;
-      max-width: 680px;
+      max-width: 760px;
       margin: 0 0 12px;
     }
     .timeline {
       position: relative;
-      margin-left: 180px;
-      padding-right: 180px;
+      margin-left: 130px;
+      padding-right: 40px;
     }
     .timeline::before {
       content: "";
@@ -141,12 +158,12 @@
     }
     .chapter-date {
       position: absolute;
-      left: calc(100% + 56px);
+      left: calc(100% + 24px);
       top: 10px;
-      width: 270px;
-      padding-left: 20px;
+      width: 220px;
+      padding-left: 16px;
       text-align: left;
-      font: 14px/1.35 Arial, sans-serif;
+      font: 13px/1.35 Arial, sans-serif;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: .08em;
@@ -160,9 +177,9 @@
       width: 1px;
       background: var(--line);
     }
-    .date-track { display: grid; gap: 14px; }
+    .date-track { display: grid; gap: 12px; }
     .date-era {
-      font: 13px/1.2 Arial, sans-serif;
+      font: 12px/1.2 Arial, sans-serif;
       letter-spacing: .12em;
       color: #8a8176;
       text-transform: uppercase;
@@ -171,31 +188,31 @@
     .date-group {
       display: grid;
       gap: 9px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       background: rgba(255,255,255,.76);
       border: 1px solid rgba(215,207,194,.85);
       border-radius: 14px;
       box-shadow: 0 6px 18px rgba(40,30,20,.04);
     }
     .date-group-label {
-      font: 11px/1.2 Arial, sans-serif;
+      font: 10px/1.2 Arial, sans-serif;
       letter-spacing: .14em;
       color: #8a8176;
       text-transform: uppercase;
     }
     .date-item {
-      font: 14px/1.38 Arial, sans-serif;
+      font: 13px/1.38 Arial, sans-serif;
       text-transform: none;
       letter-spacing: 0;
       color: #4f483f;
     }
-    .chapter-body { margin-left: 72px; max-width: 760px; }
+    .chapter-body { margin-left: 72px; max-width: 860px; }
     .chapter-title {
       position: absolute;
-      left: -210px;
+      left: -170px;
       top: 6px;
-      width: 180px;
-      font-size: 25px;
+      width: 140px;
+      font-size: 27px;
       line-height: 1.18;
       margin: 0;
       font-weight: 600;
@@ -252,7 +269,7 @@
       margin-bottom: 10px;
     }
     .block-main {
-      font-size: 18px;
+      font-size: 22px;
       color: #24211d;
       margin: 0;
       white-space: normal;
@@ -274,7 +291,7 @@
       padding: 18px 22px 22px;
       background: rgba(255,255,255,.45);
     }
-    .expand p { margin: 0; font-size: 17px; white-space: normal; }
+    .expand p { margin: 0; font-size: 20px; white-space: normal; }
     .markdown p { margin: 0 0 10px; }
     .markdown p:last-child { margin-bottom: 0; }
     .editor-media { position: relative; }
@@ -291,8 +308,8 @@
     }
     .editor-toolbar button {
       width: auto;
-      padding: 8px 10px;
-      font-size: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
       border-radius: 999px;
       border-color: rgba(41,94,168,.22);
       background: rgba(255,255,255,.92);
@@ -328,17 +345,16 @@
       margin: 0 0 8px;
       max-width: none;
     }
-    .inline-text-toolbar button {
-      width: auto;
-    }
-    @media (max-width: 1200px) {
-      .timeline { padding-right: 0; }
+    .inline-text-toolbar button { width: auto; }
+    @media (max-width: 1400px) {
+      .layout { grid-template-columns: minmax(420px, 40%) minmax(0, 60%); }
       .chapter-date { display: none; }
+      .timeline { padding-right: 0; }
     }
     @media (max-width: 980px) {
       .layout { grid-template-columns: 1fr; }
       .panel { position: static; }
-      .page { width: min(100vw - 24px, 1200px); }
+      .page { padding: 16px 12px 32px; }
       .intro, .timeline { margin-left: 0; padding-right: 0; }
       .timeline::before { left: 14px; }
       .chapter-body { margin-left: 48px; max-width: none; }
@@ -350,6 +366,8 @@
       }
       .chapter-date { display: none; }
       .media-grid-2 { grid-template-columns: 1fr; }
+      .panel h2 { font-size: 32px; }
+      label, input, select, textarea, button { font-size: 20px; }
     }
   </style>
 </head>
@@ -435,7 +453,7 @@
         </div>
 
         <div class="hint" id="statusHint">
-          Выбери элемент справа, и левая панель переключится в нужный режим. Сейчас безопасно работает только сохранение медиа.
+          Выбери элемент справа, и левая панель переключится в нужный режим. Сейчас безопасно работает сохранение медиа и точечное сохранение текста блока.
         </div>
       </section>
 
@@ -492,9 +510,7 @@
       const chapter = textChapters.find(ch => ch.title === chapterTitle);
       const blockCount = chapter ? chapter.blocks.length : 0;
       const options = [{ value: 'before-blocks', label: 'Перед блоками главы' }];
-      for (let i = 0; i < blockCount; i += 1) {
-        options.push({ value: `after-block-${i}`, label: `После блока ${i + 1}` });
-      }
+      for (let i = 0; i < blockCount; i += 1) options.push({ value: `after-block-${i}`, label: `После блока ${i + 1}` });
       positionEl.innerHTML = options.map(option => `<option value="${option.value}">${option.label}</option>`).join('');
       positionEl.value = options.some(option => option.value === selectedValue) ? selectedValue : 'before-blocks';
     }
@@ -543,9 +559,7 @@
       return plain.slice(0, 90).trim() + (plain.length > 90 ? '…' : '');
     }
 
-    function setStatus(text) {
-      statusHintEl.innerHTML = text;
-    }
+    function setStatus(text) { statusHintEl.innerHTML = text; }
 
     function clearHighlights() {
       document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
@@ -580,10 +594,6 @@
       setEditorMode('media');
     }
 
-    function isTextEditing() {
-      return Boolean(editing && editing.kind === 'text');
-    }
-
     function parseSidebarDates(md) {
       const lines = md.split('\n');
       const result = {};
@@ -600,17 +610,9 @@
           continue;
         }
         if (!currentChapter) continue;
-        if (line.startsWith('Эпоха:')) {
-          result[currentChapter].era = line.replace('Эпоха:', '').trim();
-          continue;
-        }
-        if (line.startsWith('## ')) {
-          currentGroup = line.slice(3).trim();
-          continue;
-        }
-        if (line.startsWith('- **') && currentGroup && result[currentChapter]) {
-          result[currentChapter][currentGroup]?.push(line.slice(2).trim());
-        }
+        if (line.startsWith('Эпоха:')) { result[currentChapter].era = line.replace('Эпоха:', '').trim(); continue; }
+        if (line.startsWith('## ')) { currentGroup = line.slice(3).trim(); continue; }
+        if (line.startsWith('- **') && currentGroup && result[currentChapter]) result[currentChapter][currentGroup]?.push(line.slice(2).trim());
       }
       return result;
     }
@@ -655,17 +657,8 @@
           continue;
         }
         if (!currentBlock) continue;
-        if (line.startsWith('### ')) {
-          currentBlock.title = line.slice(4).trim();
-          mode = 'main';
-          continue;
-        }
-        if (line.startsWith('**Разворот:**')) {
-          mode = 'expand';
-          const rest = line.replace('**Разворот:**', '').trim();
-          if (rest) currentBlock.expand.push(rest);
-          continue;
-        }
+        if (line.startsWith('### ')) { currentBlock.title = line.slice(4).trim(); mode = 'main'; continue; }
+        if (line.startsWith('**Разворот:**')) { mode = 'expand'; const rest = line.replace('**Разворот:**', '').trim(); if (rest) currentBlock.expand.push(rest); continue; }
         if (line.trim() === '---') continue;
         if (mode === 'expand') currentBlock.expand.push(line);
         else if (mode === 'main') currentBlock.main.push(line);
@@ -715,26 +708,6 @@
       pushCurrent();
     }
 
-    function renderDateTrack(chapterTitle) {
-      const groups = sidebarDatesByChapter[chapterTitle] || {};
-      const order = ['Татарские', 'Россия', 'СССР', 'Мир'];
-      return `
-        <div class="date-track">
-          <div class="date-era">${escapeHtml((groups && groups.era) || '')}</div>
-          ${order.map(groupName => {
-            const items = groups[groupName] || [];
-            if (!items.length) return '';
-            return `
-              <div class="date-group">
-                <div class="date-group-label">${escapeHtml(groupName)}</div>
-                ${items.map(item => `<div class="date-item">${inlineMarkdownToHtml(item)}</div>`).join('')}
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
-    }
-
     function focusMediaForm(chapter, position) {
       resetForm();
       chapterEl.value = chapter;
@@ -758,8 +731,8 @@
       clearHighlights();
       document.querySelector(`[data-text-block-key="${chapterIndex}::${blockIndex}"]`)?.classList.add('editor-highlight');
       setStatus('Текстовый режим активен. Можно править заголовок блока, основной текст и разворот, затем сохранить в <code>text-draft.md</code>.');
-      textChapterTitleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      textChapterTitleEl.focus();
+      textBlockTitleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      textBlockTitleEl.focus();
     }
 
     function editItem(chapter, index) {
@@ -791,7 +764,6 @@
         setStatus('Сейчас открыт текстовый режим. Для медиа сначала выбери медиа-элемент или плюсик на странице справа.');
         return;
       }
-
       const chapter = chapterEl.value;
       const item = {
         position: positionEl.value,
@@ -799,17 +771,11 @@
         block: blockEl.value.trim(),
         caption: captionEl.value.trim()
       };
-      if (item.type === 'image-grid') {
-        item.items = itemsEl.value.split('\n').map(s => s.trim()).filter(Boolean);
-      } else {
-        item.src = normalizeMediaPath(srcEl.value);
-      }
+      if (item.type === 'image-grid') item.items = itemsEl.value.split('\n').map(s => s.trim()).filter(Boolean);
+      else item.src = normalizeMediaPath(srcEl.value);
 
-      if (editing && editing.kind === 'media') {
-        state[editing.chapter][editing.index] = item;
-      } else {
-        state[chapter].push(item);
-      }
+      if (editing && editing.kind === 'media') state[editing.chapter][editing.index] = item;
+      else state[chapter].push(item);
       resetForm();
       renderAdminPreview();
       setStatus('Изменение внесено локально. Теперь нажми <b>Сохранить в media-placement.md</b>.');
@@ -904,9 +870,7 @@
         .filter(({ item }) => item.position === position)
         .map(({ item, index }) => renderMediaItem(item, chapterTitle, index))
         .join('');
-      const label = position === 'before-blocks'
-        ? 'Зона перед блоками главы'
-        : `Зона ${position.replace('after-block-', 'после блока ')}`;
+      const label = position === 'before-blocks' ? 'Зона перед блоками главы' : `Зона ${position.replace('after-block-', 'после блока ')}`;
       return `${rendered}${renderSlot(chapterTitle, position, label)}`;
     }
 
@@ -1063,7 +1027,7 @@
       }
       renderAdminPreview();
       resetForm();
-      setStatus('Выбери элемент справа, и левая панель переключится в нужный режим. Сейчас безопасно работает только сохранение медиа.');
+      setStatus('Выбери элемент справа, и левая панель переключится в нужный режим. Сейчас безопасно работает сохранение медиа и точечное сохранение текста блока.');
     }
 
     typeEl.addEventListener('change', () => {
