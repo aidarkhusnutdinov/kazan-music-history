@@ -12,34 +12,49 @@
       --text: #171717;
       --muted: #6f675d;
       --accent: #295ea8;
+      --card: #fbf8f2;
+      --shadow: rgba(40, 30, 20, 0.06);
+      --link: #295ea8;
+      --editor: rgba(41,94,168,.08);
+      --editor-strong: #295ea8;
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Georgia, "Times New Roman", serif;
       background: var(--bg);
       color: var(--text);
+      line-height: 1.55;
     }
+    a { color: var(--link); text-decoration: none; border-bottom: 1px solid rgba(41,94,168,.28); }
+    a:hover { border-bottom-color: rgba(41,94,168,.8); }
     .page {
-      width: min(1200px, calc(100vw - 32px));
+      width: min(1440px, calc(100vw - 32px));
       margin: 0 auto;
-      padding: 24px 0 40px;
+      padding: 24px 0 48px;
     }
-    h1 { margin: 0 0 8px; font-size: 34px; }
-    .lead { color: var(--muted); margin: 0 0 20px; max-width: 850px; line-height: 1.5; }
+    .topbar {
+      margin-bottom: 20px;
+    }
+    h1 { margin: 0 0 8px; font: 700 34px/1.05 Arial, sans-serif; }
+    .lead { color: var(--muted); margin: 0; max-width: 900px; line-height: 1.5; font-family: Arial, sans-serif; }
     .layout {
       display: grid;
       grid-template-columns: 360px minmax(0, 1fr);
       gap: 20px;
       align-items: start;
     }
-    .panel, .preview {
+    .panel {
+      position: sticky;
+      top: 16px;
       background: var(--paper);
       border: 1px solid var(--line);
       border-radius: 18px;
       padding: 16px;
+      font-family: Arial, sans-serif;
     }
-    .panel h2, .preview h2 { margin: 0 0 14px; font-size: 20px; }
+    .panel h2 { margin: 0 0 14px; font-size: 20px; }
     label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
     input, select, textarea, button {
       width: 100%;
@@ -53,56 +68,309 @@
     .field { margin-bottom: 12px; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .actions { display: grid; gap: 10px; margin-top: 14px; }
-    button {
-      cursor: pointer;
-      background: #fff;
-    }
-    button.primary {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
+    button { cursor: pointer; background: #fff; }
+    button.primary { background: var(--accent); color: white; border-color: var(--accent); }
     .hint {
       font-size: 12px;
       color: var(--muted);
       line-height: 1.45;
       margin-top: 10px;
+      font-family: Arial, sans-serif;
     }
-    .item {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
+    .page-preview {
+      background: transparent;
+      min-width: 0;
+    }
+    .intro {
+      max-width: 760px;
+      margin: 0 0 48px 120px;
+    }
+    .eyebrow {
+      font: 12px/1.2 Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--muted);
       margin-bottom: 10px;
-      background: white;
     }
-    .item strong { display: block; margin-bottom: 6px; }
-    .item-meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-    .item-actions { display: flex; gap: 8px; }
-    .item-actions button { width: auto; }
-    .export-box {
-      white-space: pre-wrap;
-      font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
-      background: #fff;
+    .hero-title {
+      font-size: clamp(34px, 5vw, 68px);
+      line-height: .98;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+    .hero-lead {
+      font-size: 18px;
+      color: #3d3934;
+      max-width: 680px;
+      margin: 0 0 12px;
+    }
+    .timeline {
+      position: relative;
+      margin-left: 120px;
+      padding-right: 180px;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--line);
+    }
+    .chapter {
+      position: relative;
+      padding: 0 0 44px 0;
+      min-height: 64px;
+    }
+    .chapter-anchor {
+      position: absolute;
+      left: 0;
+      top: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
       border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      max-height: 70vh;
-      overflow: auto;
+      background: var(--paper);
+      display: grid;
+      place-items: center;
+      font: 12px/1 Arial, sans-serif;
+      color: var(--muted);
+      z-index: 2;
     }
-    .small { font-size: 12px; color: var(--muted); }
+    .chapter-date {
+      position: absolute;
+      left: calc(100% + 56px);
+      top: 10px;
+      width: 270px;
+      padding-left: 20px;
+      text-align: left;
+      font: 14px/1.35 Arial, sans-serif;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .chapter-date::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -10px;
+      bottom: -14px;
+      width: 1px;
+      background: var(--line);
+    }
+    .date-track { display: grid; gap: 14px; }
+    .date-era {
+      font: 13px/1.2 Arial, sans-serif;
+      letter-spacing: .12em;
+      color: #8a8176;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .date-group {
+      display: grid;
+      gap: 9px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(215,207,194,.85);
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(40,30,20,.04);
+    }
+    .date-group-label {
+      font: 11px/1.2 Arial, sans-serif;
+      letter-spacing: .14em;
+      color: #8a8176;
+      text-transform: uppercase;
+    }
+    .date-item {
+      font: 14px/1.38 Arial, sans-serif;
+      text-transform: none;
+      letter-spacing: 0;
+      color: #4f483f;
+    }
+    .chapter-body {
+      margin-left: 72px;
+      max-width: 760px;
+    }
+    .chapter-title {
+      position: absolute;
+      left: -210px;
+      top: 6px;
+      width: 180px;
+      font-size: 25px;
+      line-height: 1.18;
+      margin: 0;
+      font-weight: 600;
+      color: #2d2924;
+    }
+    .blocks { display: grid; gap: 14px; }
+    .media-strip {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0 18px;
+    }
+    .media-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.72);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+    .media-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .media-caption {
+      padding: 10px 12px 12px;
+      font: 12px/1.35 Arial, sans-serif;
+      color: #6b6258;
+    }
+    .media-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .video-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.76);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+    .video-frame {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      border: 0;
+      display: block;
+    }
+    details.block {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+    details.block[open] { background: #fffaf2; }
+    details.block summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 22px 20px;
+      position: relative;
+    }
+    details.block summary::-webkit-details-marker { display: none; }
+    .block-kicker {
+      font: 11px/1.2 Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .block-main {
+      font-size: 18px;
+      color: #24211d;
+      margin: 0;
+      white-space: normal;
+    }
+    .toggle {
+      position: absolute;
+      right: 18px;
+      top: 20px;
+      font: 22px/1 Arial, sans-serif;
+      color: var(--muted);
+      background: transparent;
+      border: 0;
+      width: auto;
+      height: auto;
+    }
+    details[open] .toggle { transform: rotate(180deg); }
+    .expand {
+      border-top: 1px solid var(--line);
+      padding: 18px 22px 22px;
+      background: rgba(255,255,255,.45);
+    }
+    .expand p { margin: 0; font-size: 17px; white-space: normal; }
+    .markdown p { margin: 0 0 10px; }
+    .markdown p:last-child { margin-bottom: 0; }
+    .editor-toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0 12px;
+      font-family: Arial, sans-serif;
+    }
+    .editor-toolbar button {
+      width: auto;
+      padding: 8px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+      border-color: rgba(41,94,168,.22);
+      background: var(--editor);
+      color: var(--editor-strong);
+    }
+    .editor-slot {
+      border: 1px dashed rgba(41,94,168,.35);
+      border-radius: 16px;
+      padding: 10px 12px;
+      margin: 10px 0 16px;
+      background: rgba(41,94,168,.04);
+      font-family: Arial, sans-serif;
+    }
+    .editor-slot-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .editor-slot button {
+      width: auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border-color: rgba(41,94,168,.22);
+      background: white;
+      color: var(--editor-strong);
+    }
+    .editor-empty {
+      font: 13px/1.45 Arial, sans-serif;
+      color: var(--muted);
+    }
+    .editor-highlight {
+      outline: 3px solid rgba(41,94,168,.2);
+      scroll-margin-top: 40px;
+    }
+    @media (max-width: 1200px) {
+      .timeline { padding-right: 0; }
+      .chapter-date { display: none; }
+    }
     @media (max-width: 980px) {
       .layout { grid-template-columns: 1fr; }
+      .panel { position: static; }
+      .page { width: min(100vw - 24px, 1200px); }
+      .intro, .timeline { margin-left: 0; padding-right: 0; }
+      .timeline::before { left: 14px; }
+      .chapter-body { margin-left: 48px; max-width: none; }
+      .chapter-title {
+        position: static;
+        width: auto;
+        font-size: clamp(20px, 5.4vw, 30px);
+        margin: 0 0 16px;
+      }
+      .chapter-date { display: none; }
+      .media-grid-2 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <main class="page">
-    <h1>Media admin</h1>
-    <p class="lead">Простая админка для расстановки картинок и видео. Можно добавлять элементы, выбирать, после какого блока они стоят, и экспортировать новый <code>media-placement.md</code>.</p>
+    <div class="topbar">
+      <h1>Media admin</h1>
+      <p class="lead">Слева редактирование, справа сама страница в стиле превью. Медиа можно менять прямо по месту и потом сохранять в <code>media-placement.md</code>.</p>
+    </div>
 
     <div class="layout">
       <section class="panel">
-        <h2>Добавить / изменить элемент</h2>
+        <h2>Редактирование медиа</h2>
 
         <div class="field">
           <label for="chapter">Глава</label>
@@ -157,18 +425,17 @@
         </div>
 
         <div class="hint" id="statusHint">
-          Поправь список медиа и нажми <b>Сохранить в media-placement.md</b>. Справа показывается живая середина превью.
+          Выбери место на странице справа или добавь элемент вручную слева, потом нажми <b>Сохранить в media-placement.md</b>.
         </div>
       </section>
 
-      <section class="preview">
-        <h2>Текущая расстановка</h2>
-        <div id="itemsList"></div>
-        <h2 style="margin-top:18px">Фрагмент превью</h2>
-        <div class="small" style="margin-bottom:8px">Это встроенная середина страницы превью. После сохранения можно обновить этот блок.</div>
-        <div style="border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; height:900px;">
-          <iframe id="previewFrame" src="./preview.html" style="width:100%; height:1600px; border:0; transform:translateY(-220px); pointer-events:auto;"></iframe>
-        </div>
+      <section class="page-preview">
+        <section class="intro">
+          <div class="eyebrow">Редактор превью</div>
+          <h2 class="hero-title">Музыкальная жизнь Казани</h2>
+          <p class="hero-lead">Здесь показывается та же структура, что и в превью, но с редакторскими зонами для медиа.</p>
+        </section>
+        <section class="timeline" id="timeline"></section>
       </section>
     </div>
   </main>
@@ -187,6 +454,8 @@
 
     const state = {};
     let editing = null;
+    let sidebarDatesByChapter = {};
+    let textChapters = [];
 
     const chapterEl = document.getElementById('chapter');
     const positionEl = document.getElementById('position');
@@ -197,7 +466,6 @@
     const captionEl = document.getElementById('caption');
     const itemsField = document.getElementById('itemsField');
     const srcField = document.getElementById('srcField');
-    const itemsListEl = document.getElementById('itemsList');
     const statusHintEl = document.getElementById('statusHint');
 
     CHAPTERS.forEach(ch => {
@@ -227,6 +495,233 @@
       itemsEl.value = '';
       captionEl.value = '';
       typeEl.dispatchEvent(new Event('change'));
+      document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;');
+    }
+
+    function inlineMarkdownToHtml(text) {
+      let html = escapeHtml(text || '');
+      html = html.replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '<a target="_blank" rel="noreferrer" href="$2">$1</a>');
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      return html;
+    }
+
+    function blockTextToHtml(text) {
+      return (text || '')
+        .split(/\n\s*\n/)
+        .map(p => `<p>${inlineMarkdownToHtml(p.trim())}</p>`)
+        .join('');
+    }
+
+    function stripMarkdown(text) {
+      return (text || '')
+        .replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '$1')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .trim();
+    }
+
+    function deriveBlockTitle(block) {
+      if (block.title && block.title.trim()) return block.title.trim();
+      const plain = stripMarkdown((block.main || '').replace(/\n+/g, ' '));
+      if (!plain) return block.kicker || 'Фрагмент';
+      const sentence = plain.match(/^(.{1,90}?[.!?])(\s|$)/);
+      if (sentence) return sentence[1].trim();
+      return plain.slice(0, 90).trim() + (plain.length > 90 ? '…' : '');
+    }
+
+    function parseSidebarDates(md) {
+      const lines = md.split('\n');
+      const result = {};
+      let currentChapter = null;
+      let currentGroup = null;
+
+      for (const raw of lines) {
+        const line = raw.replace(/\r$/, '');
+        if (line.startsWith('# ')) {
+          const title = line.slice(2).trim();
+          if (!/^\d+\./.test(title)) continue;
+          currentChapter = title;
+          result[currentChapter] = { era: '', Татарские: [], Русские: [], Россия: [], СССР: [], Мир: [] };
+          currentGroup = null;
+          continue;
+        }
+        if (!currentChapter) continue;
+        if (line.startsWith('Эпоха:')) {
+          result[currentChapter].era = line.replace('Эпоха:', '').trim();
+          continue;
+        }
+        if (line.startsWith('## ')) {
+          currentGroup = line.slice(3).trim();
+          continue;
+        }
+        if (line.startsWith('- **') && currentGroup && result[currentChapter]) {
+          result[currentChapter][currentGroup]?.push(line.slice(2).trim());
+        }
+      }
+
+      return result;
+    }
+
+    function parseMarkdown(md) {
+      const lines = md.split('\n');
+      const chapters = [];
+      let currentChapter = null;
+      let currentBlock = null;
+      let mode = null;
+
+      const flushBlock = () => {
+        if (!currentBlock || !currentChapter) return;
+        currentBlock.main = currentBlock.main.join('\n').trim();
+        currentBlock.expand = currentBlock.expand.join('\n').trim();
+        currentBlock.title = deriveBlockTitle(currentBlock);
+        currentChapter.blocks.push(currentBlock);
+        currentBlock = null;
+      };
+
+      const flushChapter = () => {
+        flushBlock();
+        if (currentChapter) chapters.push(currentChapter);
+        currentChapter = null;
+      };
+
+      for (const raw of lines) {
+        const line = raw.replace(/\r$/, '');
+        if (line.startsWith('# ')) {
+          const title = line.slice(2).trim();
+          if (!/^\d+\./.test(title)) continue;
+          flushChapter();
+          currentChapter = { title, blocks: [] };
+          mode = null;
+          continue;
+        }
+        if (!currentChapter) continue;
+        if (line.startsWith('## ')) {
+          flushBlock();
+          currentBlock = { kicker: line.slice(3).trim(), title: '', main: [], expand: [] };
+          mode = null;
+          continue;
+        }
+        if (!currentBlock) continue;
+        if (line.startsWith('### ')) {
+          currentBlock.title = line.slice(4).trim();
+          mode = 'main';
+          continue;
+        }
+        if (line.startsWith('**Разворот:**')) {
+          mode = 'expand';
+          const rest = line.replace('**Разворот:**', '').trim();
+          if (rest) currentBlock.expand.push(rest);
+          continue;
+        }
+        if (line.trim() === '---') continue;
+        if (mode === 'expand') currentBlock.expand.push(line);
+        else if (mode === 'main') currentBlock.main.push(line);
+      }
+
+      flushChapter();
+      return chapters;
+    }
+
+    function parseMediaPlacement(md) {
+      const lines = md.split('\n');
+      CHAPTERS.forEach(ch => { state[ch] = []; });
+      let currentChapter = null;
+      let currentItem = null;
+      let itemsMode = false;
+
+      const pushCurrent = () => {
+        if (currentChapter && currentItem) state[currentChapter].push(currentItem);
+        currentItem = null;
+        itemsMode = false;
+      };
+
+      for (const raw of lines) {
+        const line = raw.replace(/\r$/, '');
+        if (line.startsWith('# ')) {
+          const title = line.slice(2).trim();
+          if (!/^\d+\./.test(title)) continue;
+          pushCurrent();
+          currentChapter = title;
+          continue;
+        }
+        if (!currentChapter) continue;
+        if (line.startsWith('- **position:**')) {
+          pushCurrent();
+          currentItem = { position: line.split('**position:**')[1].trim(), type: '', block: '', caption: '' };
+          continue;
+        }
+        if (!currentItem) continue;
+        if (line.includes('**block:**')) currentItem.block = line.split('**block:**')[1].trim();
+        else if (line.includes('**type:**')) currentItem.type = line.split('**type:**')[1].trim();
+        else if (line.includes('**src:**')) currentItem.src = line.split('**src:**')[1].trim().replace(/^`|`$/g, '');
+        else if (line.includes('**caption:**')) currentItem.caption = line.split('**caption:**')[1].trim();
+        else if (line.includes('**items:**')) { currentItem.items = []; itemsMode = true; }
+        else if (itemsMode && line.trim().startsWith('- `')) currentItem.items.push(line.trim().slice(3, -1));
+      }
+      pushCurrent();
+    }
+
+    function renderDateTrack(chapterTitle) {
+      const groups = sidebarDatesByChapter[chapterTitle] || {};
+      const order = ['Татарские', 'Россия', 'СССР', 'Мир'];
+      return `
+        <div class="date-track">
+          <div class="date-era">${escapeHtml((groups && groups.era) || '')}</div>
+          ${order.map(groupName => {
+            const items = groups[groupName] || [];
+            if (!items.length) return '';
+            return `
+              <div class="date-group">
+                <div class="date-group-label">${escapeHtml(groupName)}</div>
+                ${items.map(item => `<div class="date-item">${inlineMarkdownToHtml(item)}</div>`).join('')}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function focusForm(chapter, position, itemIndex = null) {
+      chapterEl.value = chapter;
+      positionEl.value = position;
+      if (itemIndex === null) {
+        resetForm();
+        chapterEl.value = chapter;
+        positionEl.value = position;
+      }
+      document.querySelector(`[data-slot="${chapter}::${position}"]`)?.classList.add('editor-highlight');
+      chapterEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      chapterEl.focus();
+    }
+
+    function editItem(chapter, index) {
+      const item = state[chapter][index];
+      editing = { chapter, index };
+      chapterEl.value = chapter;
+      positionEl.value = item.position;
+      typeEl.value = item.type;
+      blockEl.value = item.block || '';
+      captionEl.value = item.caption || '';
+      srcEl.value = item.src || '';
+      itemsEl.value = (item.items || []).join('\n');
+      typeEl.dispatchEvent(new Event('change'));
+      document.querySelectorAll('.editor-highlight').forEach(el => el.classList.remove('editor-highlight'));
+      document.querySelector(`[data-item-key="${chapter}::${index}"]`)?.classList.add('editor-highlight');
+      setStatus('Редактируй поля слева и нажми <b>Добавить элемент</b>, чтобы применить изменения, потом сохрани файл.');
+      chapterEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function removeItem(chapter, index) {
+      state[chapter].splice(index, 1);
+      renderAdminPreview();
+      setStatus('Элемент удалён локально. Теперь нажми <b>Сохранить в media-placement.md</b>.');
     }
 
     function addOrUpdate() {
@@ -244,32 +739,13 @@
       }
 
       if (editing) {
-        const arr = state[editing.chapter];
-        arr[editing.index] = item;
+        state[editing.chapter][editing.index] = item;
       } else {
         state[chapter].push(item);
       }
       resetForm();
-      renderState();
+      renderAdminPreview();
       setStatus('Изменение внесено локально. Теперь нажми <b>Сохранить в media-placement.md</b>.');
-    }
-
-    function editItem(chapter, index) {
-      const item = state[chapter][index];
-      editing = { chapter, index };
-      chapterEl.value = chapter;
-      positionEl.value = item.position;
-      typeEl.value = item.type;
-      blockEl.value = item.block || '';
-      captionEl.value = item.caption || '';
-      srcEl.value = item.src || '';
-      itemsEl.value = (item.items || []).join('\n');
-      typeEl.dispatchEvent(new Event('change'));
-    }
-
-    function removeItem(chapter, index) {
-      state[chapter].splice(index, 1);
-      renderState();
     }
 
     function renderMd() {
@@ -298,43 +774,120 @@
       return out.trim();
     }
 
-    function renderState() {
-      itemsListEl.innerHTML = '';
-      for (const chapter of CHAPTERS) {
-        const items = state[chapter];
-        if (!items.length) continue;
-        const h = document.createElement('div');
-        h.className = 'small';
-        h.style.margin = '12px 0 8px';
-        h.textContent = chapter;
-        itemsListEl.appendChild(h);
-
-        items.forEach((item, index) => {
-          const div = document.createElement('div');
-          div.className = 'item';
-          div.innerHTML = `
-            <strong>${item.type}</strong>
-            <div class="item-meta">${item.position}${item.block ? ' · ' + item.block : ''}</div>
-            <div class="small">${item.type === 'image-grid' ? (item.items || []).join(' | ') : (item.src || '')}</div>
-            ${item.caption ? `<div style="margin-top:8px">${item.caption}</div>` : ''}
-            <div class="item-actions" style="margin-top:10px">
-              <button data-edit="${chapter}::${index}">Изменить</button>
-              <button data-remove="${chapter}::${index}">Удалить</button>
-            </div>
-          `;
-          itemsListEl.appendChild(div);
-        });
+    function renderMediaItem(item, chapterTitle, itemIndex) {
+      const toolbar = `
+        <div class="editor-toolbar">
+          <button type="button" data-edit-item="${chapterTitle}::${itemIndex}">Изменить медиа</button>
+          <button type="button" data-remove-item="${chapterTitle}::${itemIndex}">Удалить медиа</button>
+        </div>
+      `;
+      if (item.type === 'image') {
+        return `
+          <div class="media-strip editor-media" data-item-key="${chapterTitle}::${itemIndex}">
+            ${toolbar}
+            <figure class="media-card">
+              <img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.block || 'Изображение')}" loading="lazy">
+              <figcaption class="media-caption">${escapeHtml(item.caption || '')}</figcaption>
+            </figure>
+          </div>
+        `;
       }
-      itemsListEl.querySelectorAll('[data-edit]').forEach(btn => {
+      if (item.type === 'youtube') {
+        return `
+          <div class="media-strip editor-media" data-item-key="${chapterTitle}::${itemIndex}">
+            ${toolbar}
+            <div class="video-card">
+              <iframe class="video-frame" src="${escapeHtml(item.src)}" title="${escapeHtml(item.block || 'Видео')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <div class="media-caption">${escapeHtml(item.caption || '')}</div>
+            </div>
+          </div>
+        `;
+      }
+      if (item.type === 'image-grid') {
+        return `
+          <div class="media-strip editor-media" data-item-key="${chapterTitle}::${itemIndex}">
+            ${toolbar}
+            <div class="media-grid-2">
+              ${(item.items || []).map(src => `
+                <figure class="media-card">
+                  <img src="${escapeHtml(src)}" alt="Архивный материал" loading="lazy">
+                </figure>
+              `).join('')}
+            </div>
+            ${item.caption ? `<div class="media-caption">${escapeHtml(item.caption)}</div>` : ''}
+          </div>
+        `;
+      }
+      return '';
+    }
+
+    function renderSlot(chapterTitle, position, label) {
+      return `
+        <div class="editor-slot" data-slot="${chapterTitle}::${position}">
+          <div class="editor-slot-title">${escapeHtml(label)}</div>
+          <button type="button" data-add-slot="${chapterTitle}::${position}">Добавить медиа сюда</button>
+        </div>
+      `;
+    }
+
+    function renderInlineMedia(chapterTitle, position) {
+      const items = state[chapterTitle] || [];
+      const rendered = items
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.position === position)
+        .map(({ item, index }) => renderMediaItem(item, chapterTitle, index))
+        .join('');
+      const label = position === 'before-blocks'
+        ? 'Зона перед блоками главы'
+        : `Зона ${position.replace('after-block-', 'после блока ')}`;
+      return `${rendered}${renderSlot(chapterTitle, position, label)}`;
+    }
+
+    function renderAdminPreview() {
+      const root = document.getElementById('timeline');
+      root.innerHTML = textChapters.map((chapter, idx) => `
+        <article class="chapter">
+          <div class="chapter-anchor">${idx + 1}</div>
+          <div class="chapter-date">${renderDateTrack(chapter.title)}</div>
+          <h2 class="chapter-title">${escapeHtml(chapter.title.replace(/^\d+\.\s*/, ''))}</h2>
+          <div class="chapter-body">
+            ${renderInlineMedia(chapter.title, 'before-blocks')}
+            <div class="blocks">
+              ${chapter.blocks.map((block, blockIdx) => `
+                <details class="block">
+                  <summary>
+                    <div class="block-kicker">${escapeHtml(block.title || '')}</div>
+                    <div class="block-main markdown">${blockTextToHtml(block.main)}</div>
+                    <span class="toggle">⌄</span>
+                  </summary>
+                  <div class="expand">
+                    <div class="markdown">${blockTextToHtml(block.expand || '')}</div>
+                  </div>
+                </details>
+                ${renderInlineMedia(chapter.title, `after-block-${blockIdx}`)}
+              `).join('')}
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      root.querySelectorAll('[data-edit-item]').forEach(btn => {
         btn.onclick = () => {
-          const [chapter, index] = btn.dataset.edit.split('::');
+          const [chapter, index] = btn.dataset.editItem.split('::');
           editItem(chapter, Number(index));
         };
       });
-      itemsListEl.querySelectorAll('[data-remove]').forEach(btn => {
+      root.querySelectorAll('[data-remove-item]').forEach(btn => {
         btn.onclick = () => {
-          const [chapter, index] = btn.dataset.remove.split('::');
+          const [chapter, index] = btn.dataset.removeItem.split('::');
           removeItem(chapter, Number(index));
+        };
+      });
+      root.querySelectorAll('[data-add-slot]').forEach(btn => {
+        btn.onclick = () => {
+          const [chapter, position] = btn.dataset.addSlot.split('::');
+          focusForm(chapter, position);
+          setStatus('Заполни поля слева для новой медиа-вставки, потом нажми <b>Добавить элемент</b>.');
         };
       });
     }
@@ -350,9 +903,7 @@
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
-        setStatus('Сохранено в <code>media-placement.md</code>. Правый фрагмент превью сейчас обновлю.');
-        const frame = document.getElementById('previewFrame');
-        frame.src = `./preview.html?ts=${Date.now()}`;
+        setStatus('Сохранено в <code>media-placement.md</code>.');
       } catch (e) {
         console.error(e);
         setStatus(`Не удалось сохранить: <code>${String(e.message || e)}</code>`);
@@ -361,48 +912,24 @@
 
     async function loadExisting() {
       try {
-        const res = await fetch('./media-placement.md', { cache: 'no-store' });
-        if (!res.ok) return;
-        const text = await res.text();
-        const lines = text.split('\n');
-        let currentChapter = null;
-        let currentItem = null;
-        let itemsMode = false;
-
-        const pushCurrent = () => {
-          if (currentChapter && currentItem) state[currentChapter].push(currentItem);
-          currentItem = null;
-          itemsMode = false;
-        };
-
-        for (const raw of lines) {
-          const line = raw.replace(/\r$/, '');
-          if (line.startsWith('# ')) {
-            const title = line.slice(2).trim();
-            if (!/^\d+\./.test(title)) continue;
-            pushCurrent();
-            currentChapter = title;
-            continue;
-          }
-          if (!currentChapter) continue;
-          if (line.startsWith('- **position:**')) {
-            pushCurrent();
-            currentItem = { position: line.split('**position:**')[1].trim(), type: '', block: '', caption: '' };
-            continue;
-          }
-          if (!currentItem) continue;
-          if (line.includes('**block:**')) currentItem.block = line.split('**block:**')[1].trim();
-          else if (line.includes('**type:**')) currentItem.type = line.split('**type:**')[1].trim();
-          else if (line.includes('**src:**')) currentItem.src = line.split('**src:**')[1].trim().replace(/^`|`$/g, '');
-          else if (line.includes('**caption:**')) currentItem.caption = line.split('**caption:**')[1].trim();
-          else if (line.includes('**items:**')) { currentItem.items = []; itemsMode = true; }
-          else if (itemsMode && line.trim().startsWith('- `')) currentItem.items.push(line.trim().slice(3, -1));
-        }
-        pushCurrent();
+        const [mediaRes, textRes, datesRes] = await Promise.all([
+          fetch('./media-placement.md', { cache: 'no-store' }),
+          fetch('./text-draft.md', { cache: 'no-store' }),
+          fetch('./chapter-sidebar-dates.md', { cache: 'no-store' })
+        ]);
+        if (!mediaRes.ok || !textRes.ok || !datesRes.ok) return;
+        const [mediaMd, textMd, datesMd] = await Promise.all([
+          mediaRes.text(),
+          textRes.text(),
+          datesRes.text()
+        ]);
+        parseMediaPlacement(mediaMd);
+        textChapters = parseMarkdown(textMd);
+        sidebarDatesByChapter = parseSidebarDates(datesMd);
       } catch (e) {
         console.error(e);
       }
-      renderState();
+      renderAdminPreview();
     }
 
     document.getElementById('addBtn').onclick = addOrUpdate;
@@ -410,7 +937,6 @@
 
     resetForm();
     loadExisting();
-    setStatus('Поправь список медиа и нажми <b>Сохранить в media-placement.md</b>. Справа встроен живой фрагмент превью.');
   </script>
 </body>
 </html>
