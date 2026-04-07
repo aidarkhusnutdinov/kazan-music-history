@@ -6,7 +6,7 @@
 
 # 1. Казань начала ХХ века
 
-- **position:** before-blocks
+- **position:** after-block-0
   - **type:** image
   - **src:** `kazan-panorama.jpg`
   - **caption:** Панорама как вход в текст: сначала город, потом уже его музыкальная жизнь
