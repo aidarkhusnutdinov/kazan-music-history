@@ -21,8 +21,9 @@
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
+  color: red;
       margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: Georgia, "Times New Roman", serif; color: red; font-family: Georgia, "Times New Roman", serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.55;
@@ -37,7 +38,7 @@
     }
     .topbar { margin-bottom: 20px; }
     h1 { margin: 0 0 8px; font: 700 34px/1.05 Arial, sans-serif; }
-    .lead { color: var(--muted); margin: 0; max-width: 900px; line-height: 1.5; font-family: Arial, sans-serif; }
+    .lead { color: var(--muted); margin: 0; max-width: 960px; line-height: 1.5; font-family: Arial, sans-serif; }
     .layout {
       display: grid;
       grid-template-columns: minmax(520px, 42%) minmax(0, 58%);
@@ -59,7 +60,7 @@
       margin: 0;
     }
     .panel h2 { margin: 0 0 12px; font-size: 42px; }
-    label { display: block; font-size: 24px; color: var(--muted); margin: 0 0 10px; }
+    label { display: block; font-size: 26px; color: var(--muted); margin: 0 0 10px; }
     input, select, textarea, button {
       width: 100%;
       font: inherit;
@@ -67,7 +68,7 @@
       border-radius: 18px;
       padding: 18px 20px;
       background: white;
-      font-size: 28px;
+      font-size: 30px;
     }
     textarea { min-height: 220px; resize: vertical; }
     .field { margin-bottom: 24px; }
@@ -188,7 +189,7 @@
     .date-group {
       display: grid;
       gap: 9px;
-      padding: 10px 12px;
+      padding: 12px 14px;
       background: rgba(255,255,255,.76);
       border: 1px solid rgba(215,207,194,.85);
       border-radius: 14px;
@@ -206,7 +207,8 @@
       letter-spacing: 0;
       color: #4f483f;
     }
-    .chapter-body { margin-left: 84px; max-width: 880px; } /* Ensure it doesn't push dates off */
+    .chapter-body {
+  color: red; margin-left: 84px; max-width: 880px; } /* Ensure it doesn't push dates off */
     .chapter-title {
       position: absolute;
       left: -118px; /* Adjusted left */
@@ -229,8 +231,8 @@
     }
     .media-card img { display: block; width: 100%; height: auto; }
     .media-caption {
-      padding: 14px 16px 16px;
-      font: 16px/1.45 Arial, sans-serif;
+      padding: 16px 18px 20px;
+      font: 18px/1.5 Arial, sans-serif;
       color: #6b6258;
     }
     .media-grid-2 {
@@ -288,10 +290,10 @@
     details[open] .toggle { transform: rotate(180deg); }
     .expand {
       border-top: 1px solid var(--line);
-      padding: 22px 26px 26px;
+      padding: 26px 28px 28px;
       background: rgba(255,255,255,.45);
     }
-    .expand p { margin: 0; font-size: 28px; white-space: normal; }
+    .expand p { margin: 0; font-size: 30px; white-space: normal; }
     .markdown p { margin: 0 0 10px; }
     .markdown p:last-child { margin-bottom: 0; }
     .editor-media { position: relative; }
@@ -308,8 +310,8 @@
     }
     .editor-toolbar button {
       width: auto;
-      padding: 10px 12px;
-      font-size: 13px;
+      padding: 12px 14px;
+      font-size: 14px;
       border-radius: 999px;
       border-color: rgba(41,94,168,.22);
       background: rgba(255,255,255,.92);
@@ -323,14 +325,14 @@
       font-family: Arial, sans-serif;
     }
     .editor-slot button {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       padding: 0;
       border-radius: 50%;
       border-color: rgba(41,94,168,.28);
       background: white;
       color: var(--editor-strong);
-      font-size: 24px;
+      font-size: 26px;
       line-height: 1;
       display: grid;
       place-items: center;
@@ -357,7 +359,8 @@
       .page { padding: 16px 12px 32px; }
       .intro, .timeline { margin-left: 0; padding-right: 0; }
       .timeline::before { left: 14px; }
-      .chapter-body { margin-left: 48px; max-width: none; }
+      .chapter-body {
+  color: red; margin-left: 48px; max-width: none; }
       .chapter-title {
         position: static;
         width: auto;
@@ -461,7 +464,7 @@
         <section class="intro">
           <div class="eyebrow">Редактор превью</div>
           <h2 class="hero-title">Музыкальная жизнь Казани</h2>
-          <p class="hero-lead">Здесь показывается та же структура, что и в превью, но с редакторскими зонами для медиа и текста.</p>
+          <p class="hero-lead">Здесь показывается та же [структура], что и в превью, но с редакторскими зонами для медиа и текста.</p>
         </section>
         <section class="timeline" id="timeline"></section>
       </section>
