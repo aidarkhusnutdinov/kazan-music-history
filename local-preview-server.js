@@ -78,6 +78,24 @@ function renderMd(data) {
   return `${out.join('\n').trim()}\n`;
 }
 
+function patchChapterTitle(source, payload) {
+  const { chapterIndex, newTitle } = payload || {};
+  const lines = source.split('\n');
+  let found = 0;
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line.startsWith('# ') && /^\d+\./.test(line.slice(2).trim())) {
+      if (found === chapterIndex) {
+        const num = line.slice(2).replace(/^\d+\.\s*/, '').trim();
+        lines[i] = `${line.slice(0, line.indexOf('.') + 1)} ${newTitle.trim()}`;
+        return lines.join('\n');
+      }
+      found += 1;
+    }
+  }
+  throw new Error('Chapter not found');
+}
+
 function patchTextDraftBlock(source, payload) {
   const { chapterIndex, blockIndex, title, main, expand } = payload || {};
   const lines = source.split('\n');
@@ -197,6 +215,13 @@ const server = http.createServer((req, res) => {
         if (url.pathname === '/save-media') {
           fs.writeFileSync(MEDIA_MD, renderMd(data), 'utf8');
           sendJson(res, 200, { ok: true, target: 'media-placement.md' });
+          return;
+        }
+        if (url.pathname === '/save-chapter-title') {
+          const source = fs.readFileSync(TEXT_DRAFT_MD, 'utf8');
+          const patched = patchChapterTitle(source, data);
+          fs.writeFileSync(TEXT_DRAFT_MD, patched, 'utf8');
+          sendJson(res, 200, { ok: true, target: 'text-draft.md', field: 'chapter-title' });
           return;
         }
         const source = fs.readFileSync(TEXT_DRAFT_MD, 'utf8');

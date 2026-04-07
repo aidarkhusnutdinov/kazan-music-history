@@ -402,11 +402,6 @@
             </div>
           </div>
 
-          <div class="field">
-            <label for="block">Название блока (для ориентира)</label>
-            <input id="block" placeholder="например: Магди" />
-          </div>
-
           <div class="field" id="srcField">
             <label for="src">Ссылка / путь</label>
             <input id="src" placeholder="https://... или kazan-panorama.jpg" />
@@ -476,7 +471,6 @@
     const chapterEl = document.getElementById('chapter');
     const positionEl = document.getElementById('position');
     const typeEl = document.getElementById('type');
-    const blockEl = document.getElementById('block');
     const srcEl = document.getElementById('src');
     const itemsEl = document.getElementById('items');
     const captionEl = document.getElementById('caption');
@@ -517,6 +511,16 @@
       const trimmed = String(value || '').trim();
       if (/^(https?:)?\/\//i.test(trimmed)) return trimmed;
       return trimmed.replace(/^\.\//, '');
+    }
+
+    function normalizeYoutubeEmbed(src) {
+      if (!src) return src;
+      const s = String(src).trim();
+      if (s.includes('/embed/')) return s;
+      const m = s.match(/(?:youtu\.be\/|v=|embed\/)([a-zA-Z0-9_-]{11})/);
+      if (m && m[1]) return `https://www.youtube.com/embed/${m[1]}`;
+      if (/^[a-zA-Z0-9_-]{11}$/.test(s)) return `https://www.youtube.com/embed/${s}`;
+      return s;
     }
 
     function escapeHtml(str) {
@@ -579,7 +583,6 @@
       if (textChapters.length) chapterEl.value = textChapters[0].title;
       rebuildPositionOptions(chapterEl.value, 'before-blocks');
       typeEl.value = 'image';
-      blockEl.value = '';
       srcEl.value = '';
       itemsEl.value = '';
       captionEl.value = '';
@@ -740,7 +743,6 @@
       chapterEl.value = chapter;
       rebuildPositionOptions(chapter, item.position);
       typeEl.value = item.type;
-      blockEl.value = item.block || '';
       captionEl.value = item.caption || '';
       srcEl.value = item.src || '';
       itemsEl.value = (item.items || []).join('\n');
@@ -763,10 +765,11 @@
         return;
       }
       const chapter = chapterEl.value;
+      const baseItem = (editing && editing.kind === 'media') ? state[editing.chapter][editing.index] : {};
       const item = {
+        ...baseItem, // сохраняем старые свойства (включая block, если есть)
         position: positionEl.value,
         type: typeEl.value,
-        block: blockEl.value.trim(),
         caption: captionEl.value.trim()
       };
       if (item.type === 'image-grid') item.items = itemsEl.value.split('\n').map(s => s.trim()).filter(Boolean);
@@ -825,11 +828,12 @@
         `;
       }
       if (item.type === 'youtube') {
+        const embedSrc = normalizeYoutubeEmbed(item.src);
         return `
           <div class="media-strip editor-media" data-item-key="${chapterTitle}::${itemIndex}">
             ${toolbar}
             <div class="video-card">
-              <iframe class="video-frame" src="${escapeHtml(item.src)}" title="${escapeHtml(item.block || 'Видео')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe class="video-frame" src="${escapeHtml(embedSrc)}" title="${escapeHtml(item.block || 'Видео')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <div class="media-caption">${escapeHtml(item.caption || '')}</div>
             </div>
           </div>

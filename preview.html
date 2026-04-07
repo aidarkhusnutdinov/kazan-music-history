@@ -363,6 +363,19 @@
       return plain.slice(0, 90).trim() + (plain.length > 90 ? '…' : '');
     }
 
+    function normalizeYoutubeEmbed(src) {
+      if (!src) return src;
+      const s = String(src).trim();
+      // Если уже embed, оставляем
+      if (s.includes('/embed/')) return s;
+      // Извлекаем ID из youtu.be/ или youtube.com/watch?v=
+      const m = s.match(/(?:youtu\.be\/|v=|embed\/)([a-zA-Z0-9_-]{11})/);
+      if (m && m[1]) return `https://www.youtube.com/embed/${m[1]}`;
+      // Если передан чистый ID (11 символов)
+      if (/^[a-zA-Z0-9_-]{11}$/.test(s)) return `https://www.youtube.com/embed/${s}`;
+      return s;
+    }
+
     function parseSidebarDates(md) {
       const lines = md.split('\n');
       const result = {};
@@ -551,10 +564,11 @@
         `;
       }
       if (item.type === 'youtube') {
+        const embedSrc = normalizeYoutubeEmbed(item.src);
         return `
           <div class="media-strip">
             <div class="video-card">
-              <iframe class="video-frame" src="${escapeHtml(item.src)}" title="${escapeHtml(item.block || 'Видео')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe class="video-frame" src="${escapeHtml(embedSrc)}" title="${escapeHtml(item.block || 'Видео')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <div class="media-caption">${escapeHtml(item.caption || '')}</div>
             </div>
           </div>
