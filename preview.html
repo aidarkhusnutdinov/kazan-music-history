@@ -420,27 +420,6 @@
       cursor: default;
       background: transparent;
     }
-    .im-mong-next-row {
-      margin-top: 18px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .im-mong-next-btn {
-      padding: 11px 22px;
-      border-radius: 10px;
-      border: 0;
-      background: #295ea8;
-      color: #fff;
-      font: 600 14px/1.2 Arial, sans-serif;
-      cursor: pointer;
-    }
-    .im-mong-next-btn:hover { background: #1f4a87; }
-    .im-mong-chosen-note {
-      font-size: 13px;
-      color: #6b6258;
-    }
     .im-mong-reveal {
       padding: 28px 22px 28px;
       text-align: center;
@@ -471,6 +450,30 @@
       cursor: pointer;
     }
     .im-mong-restart-btn:hover { border-color: #295ea8; color: #295ea8; }
+    .im-mong-chosen-screen {
+      padding: 36px 22px 32px;
+      text-align: center;
+    }
+    .im-mong-chosen-heading {
+      font: 700 26px/1.2 Georgia, serif;
+      color: #24211d;
+      margin: 0 0 14px;
+    }
+    .im-mong-chosen-explanation {
+      font: italic 16px/1.6 Georgia, serif;
+      color: #7b7368;
+      margin: 0 0 28px;
+    }
+    .im-mong-next-btn {
+      padding: 11px 28px;
+      border-radius: 10px;
+      border: 0;
+      background: #295ea8;
+      color: #fff;
+      font: 600 14px/1.2 Arial, sans-serif;
+      cursor: pointer;
+    }
+    .im-mong-next-btn:hover { background: #1f4a87; }
   </style>
 </head>
 <body>
@@ -826,7 +829,7 @@
     // ── Интерактив: Моң есть или нет? ──────────────────────────────────
     // Всё редактируемое содержимое — в interactive-mong.md
 
-    let MONG_CONFIG = { kicker: '', title: '', desc: '', chooseBtnText: '', nextBtnText: '', finishBtnText: '', chosenNoteA: '', chosenNoteB: '', revealTitle: '', revealText: '', restartBtnText: '', rounds: [] };
+    let MONG_CONFIG = { kicker: '', title: '', desc: '', chooseBtnText: '', nextBtnText: '', finishBtnText: '', chosenNoteA: '', chosenNoteB: '', chosenExplanation: '', revealTitle: '', revealText: '', restartBtnText: '', rounds: [] };
 
     function parseMongConfig(md) {
       const lines = md.split('\n');
@@ -854,6 +857,7 @@
           if (field(line, 'finish-btn') !== null) { cfg.finishBtnText = field(line, 'finish-btn'); continue; }
           if (field(line, 'chosen-note-a') !== null) { cfg.chosenNoteA = field(line, 'chosen-note-a'); continue; }
           if (field(line, 'chosen-note-b') !== null) { cfg.chosenNoteB = field(line, 'chosen-note-b'); continue; }
+          if (field(line, 'chosen-explanation') !== null) { cfg.chosenExplanation = field(line, 'chosen-explanation'); continue; }
         }
         if (section === 'reveal') {
           if (field(line, 'title') !== null) { cfg.revealTitle = field(line, 'title'); continue; }
@@ -862,6 +866,12 @@
         }
         if (section === 'round' && round) {
           if (field(line, 'prompt') !== null) { round.prompt = field(line, 'prompt'); continue; }
+          if (field(line, 'choose-btn-a') !== null) { round.chooseBtnA = field(line, 'choose-btn-a'); continue; }
+          if (field(line, 'choose-btn-b') !== null) { round.chooseBtnB = field(line, 'choose-btn-b'); continue; }
+          if (field(line, 'chosen-note-a') !== null) { round.chosenNoteA = field(line, 'chosen-note-a'); continue; }
+          if (field(line, 'chosen-note-b') !== null) { round.chosenNoteB = field(line, 'chosen-note-b'); continue; }
+          if (field(line, 'chosen-explanation') !== null) { round.chosenExplanation = field(line, 'chosen-explanation'); continue; }
+          if (field(line, 'next-btn') !== null) { round.nextBtnText = field(line, 'next-btn'); continue; }
           if (field(line, 'a-youtube') !== null) { round.a.youtubeId = field(line, 'a-youtube'); continue; }
           if (field(line, 'a-start') !== null) { round.a.start = parseInt(field(line, 'a-start'), 10); continue; }
           if (field(line, 'a-end') !== null) { round.a.end = parseInt(field(line, 'a-end'), 10); continue; }
@@ -922,36 +932,44 @@
 
       const r = cfg.rounds[mongState.round];
       const chosen = mongState.chosen;
-      const optA = chosen === null ? '' : (chosen === 'a' ? 'chosen' : 'not-chosen');
-      const optB = chosen === null ? '' : (chosen === 'b' ? 'chosen' : 'not-chosen');
       const isLast = mongState.round + 1 >= cfg.rounds.length;
 
-      const chosenNote = chosen === null ? '' : `
-        <div class="im-mong-next-row">
-          <button class="im-mong-next-btn" onclick="mongNext()">${escapeHtml(isLast ? cfg.finishBtnText : cfg.nextBtnText)}</button>
-          <span class="im-mong-chosen-note">${escapeHtml(chosen === 'a' ? cfg.chosenNoteA : cfg.chosenNoteB)}</span>
-        </div>
-      `;
+      // Значения раунда с фолбеком на глобальные
+      const chooseBtnA       = r.chooseBtnA       ?? cfg.chooseBtnText;
+      const chooseBtnB       = r.chooseBtnB       ?? cfg.chooseBtnText;
+      const chosenNoteA      = r.chosenNoteA      ?? cfg.chosenNoteA;
+      const chosenNoteB      = r.chosenNoteB      ?? cfg.chosenNoteB;
+      const chosenExpl       = r.chosenExplanation ?? cfg.chosenExplanation;
+      const nextBtn          = r.nextBtnText      ?? (isLast ? cfg.finishBtnText : cfg.nextBtnText);
+
+      if (chosen !== null) {
+        return head + `
+          <div class="im-mong-chosen-screen">
+            <div class="im-mong-chosen-heading">${escapeHtml(chosen === 'a' ? chosenNoteA : chosenNoteB)}</div>
+            <div class="im-mong-chosen-explanation">${escapeHtml(chosenExpl)}</div>
+            <button class="im-mong-next-btn" onclick="mongNext()">${escapeHtml(nextBtn)}</button>
+          </div>
+        `;
+      }
 
       return head + `
         <div class="im-mong-body">
           <div class="im-mong-round-label">Раунд ${mongState.round + 1} из ${cfg.rounds.length}</div>
           <div class="im-mong-prompt">${escapeHtml(r.prompt)}</div>
           <div class="im-mong-options">
-            <div class="im-mong-option ${optA}">
+            <div class="im-mong-option">
               <iframe src="${mongYtSrc(r.a)}" title="${escapeHtml(r.a.label)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               <div class="im-mong-option-label">${escapeHtml(r.a.label)}</div>
             </div>
-            <div class="im-mong-option ${optB}">
+            <div class="im-mong-option">
               <iframe src="${mongYtSrc(r.b)}" title="${escapeHtml(r.b.label)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               <div class="im-mong-option-label">${escapeHtml(r.b.label)}</div>
             </div>
           </div>
           <div class="im-mong-btn-row">
-            <button class="im-mong-choose-btn" onclick="mongChoose('a')" ${chosen !== null ? 'disabled' : ''}>${escapeHtml(cfg.chooseBtnText)}</button>
-            <button class="im-mong-choose-btn" onclick="mongChoose('b')" ${chosen !== null ? 'disabled' : ''}>${escapeHtml(cfg.chooseBtnText)}</button>
+            <button class="im-mong-choose-btn" onclick="mongChoose('a')">${escapeHtml(chooseBtnA)}</button>
+            <button class="im-mong-choose-btn" onclick="mongChoose('b')">${escapeHtml(chooseBtnB)}</button>
           </div>
-          ${chosenNote}
         </div>
       `;
     }
