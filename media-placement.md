@@ -45,6 +45,10 @@
     - `https://cdn-static.i-m-i.ru/imi-static/store/uploads/content/blockelementitem/125/image/main-224e8f8439a487497b787620ea301f97.jpg`
   - **caption:** Институциональная память: люди, фасады, выпуски
 
+- **position:** after-block-2
+  - **block:** Моң и академическая школа
+  - **type:** interactive-mong
+
 - **position:** after-block-3
   - **block:** Союз композиторов
   - **type:** image
