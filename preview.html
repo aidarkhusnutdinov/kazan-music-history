@@ -906,7 +906,10 @@
     }
 
     function mongYtSrc(clip) {
-      return `https://www.youtube.com/embed/${clip.youtubeId}?start=${clip.start}&end=${clip.end}&rel=0`;
+      const raw = String(clip.youtubeId).trim();
+      const m = raw.match(/(?:youtu\.be\/|[?&]v=|embed\/)([a-zA-Z0-9_-]{11})/);
+      const id = m ? m[1] : (/^[a-zA-Z0-9_-]{11}$/.test(raw) ? raw : raw);
+      return `https://www.youtube.com/embed/${id}?start=${clip.start}&end=${clip.end}&rel=0`;
     }
 
     function buildMongHtml() {
