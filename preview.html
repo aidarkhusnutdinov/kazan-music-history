@@ -925,10 +925,9 @@
     let GUMMERT_CONFIG = { kicker: '', title: '', desc: '', restartBtnText: '', questions: {}, ends: {} };
 
     function parseGummertConfig(md) {
-      const cfg = { kicker: '', title: '', desc: '', restartBtnText: 'Попробовать ещё раз', questions: {}, ends: {} };
+      const cfg = { kicker: '', title: '', desc: '', continueBtnText: 'Дальше', restartBtnText: 'Попробовать ещё раз', questions: {} };
       const lines = md.split('\n');
       let section = 'meta';
-      let currentId = null;
       let currentObj = null;
 
       const field = (line, key) => {
@@ -939,53 +938,55 @@
       for (const raw of lines) {
         const line = raw.replace(/\r$/, '');
         const qMatch = line.match(/^## Вопрос (\S+)/);
-        const eMatch = line.match(/^## Финал (\S+)/);
-
         if (qMatch) {
-          currentId = qMatch[1];
-          currentObj = { text: '', yesLabel: '', noLabel: '', yesNext: '', noNext: '' };
-          cfg.questions[currentId] = currentObj;
+          currentObj = { text: '', yesLabel: '', noLabel: '', yesReactionTitle: '', yesReaction: '', yesNext: null, noReactionTitle: '', noReaction: '' };
+          cfg.questions[qMatch[1]] = currentObj;
           section = 'question';
           continue;
         }
-        if (eMatch) {
-          currentId = eMatch[1];
-          currentObj = { title: '', text: '' };
-          cfg.ends[currentId] = currentObj;
-          section = 'end';
-          continue;
-        }
-
         if (section === 'meta') {
           if (field(line, 'kicker') !== null) { cfg.kicker = field(line, 'kicker'); continue; }
           if (field(line, 'title') !== null) { cfg.title = field(line, 'title'); continue; }
           if (field(line, 'desc') !== null) { cfg.desc = field(line, 'desc'); continue; }
+          if (field(line, 'continue-btn') !== null) { cfg.continueBtnText = field(line, 'continue-btn'); continue; }
           if (field(line, 'restart-btn') !== null) { cfg.restartBtnText = field(line, 'restart-btn'); continue; }
         }
         if (section === 'question' && currentObj) {
           if (field(line, 'text') !== null) { currentObj.text = field(line, 'text'); continue; }
           if (field(line, 'yes-label') !== null) { currentObj.yesLabel = field(line, 'yes-label'); continue; }
           if (field(line, 'no-label') !== null) { currentObj.noLabel = field(line, 'no-label'); continue; }
+          if (field(line, 'yes-reaction-title') !== null) { currentObj.yesReactionTitle = field(line, 'yes-reaction-title'); continue; }
+          if (field(line, 'yes-reaction') !== null) { currentObj.yesReaction = field(line, 'yes-reaction'); continue; }
           if (field(line, 'yes-next') !== null) { currentObj.yesNext = field(line, 'yes-next'); continue; }
-          if (field(line, 'no-next') !== null) { currentObj.noNext = field(line, 'no-next'); continue; }
-        }
-        if (section === 'end' && currentObj) {
-          if (field(line, 'title') !== null) { currentObj.title = field(line, 'title'); continue; }
-          if (field(line, 'text') !== null) { currentObj.text = field(line, 'text'); continue; }
+          if (field(line, 'no-reaction-title') !== null) { currentObj.noReactionTitle = field(line, 'no-reaction-title'); continue; }
+          if (field(line, 'no-reaction') !== null) { currentObj.noReaction = field(line, 'no-reaction'); continue; }
         }
       }
       return cfg;
     }
 
-    let gummertState = { node: 'q1' };
+    // phase: 'question' | 'reaction'
+    // reactionTitle, reactionText, nextQuestion (null = dead end, показываем restart)
+    let gummertState = { phase: 'question', question: 'q1', reactionTitle: '', reactionText: '', nextQuestion: null };
 
-    function gummertAnswer(next) {
-      gummertState.node = next;
+    function gummertAnswer(choice) {
+      const cfg = GUMMERT_CONFIG;
+      const q = cfg.questions[gummertState.question];
+      if (!q) return;
+      const title   = choice === 'yes' ? q.yesReactionTitle : q.noReactionTitle;
+      const text    = choice === 'yes' ? q.yesReaction      : q.noReaction;
+      const next    = choice === 'yes' ? q.yesNext          : null;
+      gummertState = { phase: 'reaction', question: gummertState.question, reactionTitle: title, reactionText: text, nextQuestion: next };
+      renderGummert();
+    }
+
+    function gummertContinue() {
+      gummertState = { phase: 'question', question: gummertState.nextQuestion, reactionTitle: '', reactionText: '', nextQuestion: null };
       renderGummert();
     }
 
     function gummertRestart() {
-      gummertState = { node: 'q1' };
+      gummertState = { phase: 'question', question: 'q1', reactionTitle: '', reactionText: '', nextQuestion: null };
       renderGummert();
     }
 
@@ -999,33 +1000,33 @@
         </div>
       `;
 
-      const node = gummertState.node;
-      const question = cfg.questions[node];
-      const end = cfg.ends[node];
-
-      if (question) {
+      if (gummertState.phase === 'question') {
+        const q = cfg.questions[gummertState.question];
+        if (!q) return head;
         return head + `
           <div class="im-gummert-body">
-            <div class="im-gummert-question">${escapeHtml(question.text)}</div>
+            <div class="im-gummert-question">${escapeHtml(q.text)}</div>
             <div class="im-gummert-btn-row">
-              <button class="im-gummert-btn" onclick="gummertAnswer('${escapeHtml(question.yesNext)}')">${escapeHtml(question.yesLabel)}</button>
-              <button class="im-gummert-btn" onclick="gummertAnswer('${escapeHtml(question.noNext)}')">${escapeHtml(question.noLabel)}</button>
+              <button class="im-gummert-btn" onclick="gummertAnswer('yes')">${escapeHtml(q.yesLabel)}</button>
+              <button class="im-gummert-btn" onclick="gummertAnswer('no')">${escapeHtml(q.noLabel)}</button>
             </div>
           </div>
         `;
       }
 
-      if (end) {
-        return head + `
-          <div class="im-gummert-end">
-            <div class="im-gummert-end-title">${escapeHtml(end.title)}</div>
-            <div class="im-gummert-end-text">${escapeHtml(end.text)}</div>
-            <button class="im-gummert-restart-btn" onclick="gummertRestart()">${escapeHtml(cfg.restartBtnText)}</button>
-          </div>
-        `;
-      }
+      // phase === 'reaction'
+      const isEnd = gummertState.nextQuestion === null;
+      const actionBtn = isEnd
+        ? `<button class="im-gummert-restart-btn" onclick="gummertRestart()">${escapeHtml(cfg.restartBtnText)}</button>`
+        : `<button class="im-gummert-btn" onclick="gummertContinue()">${escapeHtml(cfg.continueBtnText)}</button>`;
 
-      return head;
+      return head + `
+        <div class="im-gummert-end">
+          <div class="im-gummert-end-title">${escapeHtml(gummertState.reactionTitle)}</div>
+          <div class="im-gummert-end-text">${escapeHtml(gummertState.reactionText)}</div>
+          ${actionBtn}
+        </div>
+      `;
     }
 
     function renderGummert() {
