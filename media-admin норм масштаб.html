@@ -583,14 +583,21 @@
           const title = line.slice(2).trim();
           if (!/^\d+\./.test(title)) continue;
           currentChapter = title;
-          result[currentChapter] = { era: '', Татарские: [], Русские: [], Россия: [], СССР: [], Мир: [] };
+          result[currentChapter] = { era: '', _order: [] };
           currentGroup = null;
           continue;
         }
         if (!currentChapter) continue;
         if (line.startsWith('Эпоха:')) { result[currentChapter].era = line.replace('Эпоха:', '').trim(); continue; }
-        if (line.startsWith('## ')) { currentGroup = line.slice(3).trim(); continue; }
-        if (line.startsWith('- **') && currentGroup && result[currentChapter]) result[currentChapter][currentGroup]?.push(line.slice(2).trim());
+        if (line.startsWith('## ')) {
+          currentGroup = line.slice(3).trim();
+          if (!result[currentChapter][currentGroup]) {
+            result[currentChapter][currentGroup] = [];
+            result[currentChapter]._order.push(currentGroup);
+          }
+          continue;
+        }
+        if (line.startsWith('- **') && currentGroup && result[currentChapter]) result[currentChapter][currentGroup].push(line.slice(2).trim());
       }
       return result;
     }
@@ -886,7 +893,7 @@
 
     function renderDateTrack(chapterTitle) {
       const groups = sidebarDatesByChapter[chapterTitle] || {};
-      const order = ['Татарские', 'Россия', 'СССР', 'Мир'];
+      const order = (groups && groups._order) || [];
       return `
         <div class="date-track">
           <div class="date-era">${escapeHtml((groups && groups.era) || '')}</div>
