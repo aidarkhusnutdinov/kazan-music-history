@@ -53,13 +53,13 @@
 **chosen-explanation:** Моң сложно объяснить, но легко почувствовать.
 **next-btn:** Дальше
 
-**a-youtube:** 0ENjFcQWQmw
-**a-start:** 12
-**a-end:** 23
+**a-youtube:** https://www.youtube.com/watch?v=li_abh2NAdk
+**a-start:** 19
+**a-end:** 40
 **a-label:** Отрывок А
 
-**b-youtube:** VoeWD66-EsQ
-**b-start:** 24
+**b-youtube:** https://www.youtube.com/watch?v=j-7Rig5ryD0
+**b-start:** 8
 **b-end:** 40
 **b-label:** Отрывок Б
 
@@ -76,12 +76,12 @@
 **chosen-explanation:** Было сложно, но ты справился.
 **next-btn:** Посмотреть ответ
 
-**a-youtube:** 0ENjFcQWQmw
-**a-start:** 12
-**a-end:** 23
+**a-youtube:** https://www.youtube.com/watch?v=n5cDq7K9QxE
+**a-start:** 25
+**a-end:** 40
 **a-label:** Отрывок А
 
-**b-youtube:** VoeWD66-EsQ
-**b-start:** 24
-**b-end:** 40
+**b-youtube:** https://www.youtube.com/watch?v=ziEFDu9qP8w
+**b-start:** 68
+**b-end:** 86
 **b-label:** Отрывок Б
