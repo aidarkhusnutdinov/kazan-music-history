@@ -310,6 +310,92 @@
       .error { margin-left: 48px; }
     }
 
+    /* ── Интерактив: Школа Гуммерта ── */
+    .im-gummert {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px var(--shadow);
+      font-family: Arial, sans-serif;
+    }
+    .im-gummert-head {
+      padding: 20px 22px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .im-gummert-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .im-gummert-title {
+      font: 700 20px/1.2 Georgia, serif;
+      color: #24211d;
+      margin: 0 0 6px;
+    }
+    .im-gummert-desc {
+      font-size: 14px;
+      color: #6b6258;
+      margin: 0;
+      line-height: 1.45;
+    }
+    .im-gummert-body {
+      padding: 32px 22px 36px;
+      text-align: center;
+    }
+    .im-gummert-question {
+      font: 700 22px/1.3 Georgia, serif;
+      color: #24211d;
+      margin: 0 0 28px;
+    }
+    .im-gummert-btn-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .im-gummert-btn {
+      padding: 12px 32px;
+      border-radius: 10px;
+      border: 1.5px solid #295ea8;
+      background: transparent;
+      color: #295ea8;
+      font: 600 15px/1.2 Arial, sans-serif;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .im-gummert-btn:hover {
+      background: #295ea8;
+      color: #fff;
+    }
+    .im-gummert-end {
+      padding: 32px 22px 36px;
+      text-align: center;
+    }
+    .im-gummert-end-title {
+      font: 700 22px/1.2 Georgia, serif;
+      color: #24211d;
+      margin: 0 0 14px;
+    }
+    .im-gummert-end-text {
+      font-size: 16px;
+      line-height: 1.65;
+      color: #3d3934;
+      max-width: 520px;
+      margin: 0 auto 24px;
+    }
+    .im-gummert-restart-btn {
+      padding: 10px 22px;
+      border-radius: 10px;
+      border: 1.5px solid var(--line);
+      background: transparent;
+      color: #4f483f;
+      font: 14px/1.2 Arial, sans-serif;
+      cursor: pointer;
+    }
+    .im-gummert-restart-btn:hover { border-color: #295ea8; color: #295ea8; }
+
     /* ── Интерактив: Моң есть или нет? ── */
     .im-mong {
       border: 1px solid var(--line);
@@ -757,6 +843,9 @@
       if (item.type === 'interactive-mong') {
         return `<div id="interactive-mong" class="im-mong"></div>`;
       }
+      if (item.type === 'interactive-gummert') {
+        return `<div id="interactive-gummert" class="im-gummert"></div>`;
+      }
       return '';
     }
 
@@ -796,26 +885,31 @@
 
     async function init() {
       try {
-        const [textRes, datesRes, mediaRes, mongRes] = await Promise.all([
+        const [textRes, datesRes, mediaRes, mongRes, gummertRes] = await Promise.all([
           fetch('./text-draft.md', { cache: 'no-store' }),
           fetch('./chapter-sidebar-dates.md', { cache: 'no-store' }),
           fetch('./media-placement.md', { cache: 'no-store' }),
           fetch('./interactive-mong.md', { cache: 'no-store' }),
+          fetch('./interactive-gummert.md', { cache: 'no-store' }),
         ]);
         if (!textRes.ok) throw new Error(`text-draft HTTP ${textRes.status}`);
         if (!datesRes.ok) throw new Error(`chapter-sidebar-dates HTTP ${datesRes.status}`);
         if (!mediaRes.ok) throw new Error(`media-placement HTTP ${mediaRes.status}`);
         if (!mongRes.ok) throw new Error(`interactive-mong HTTP ${mongRes.status}`);
+        if (!gummertRes.ok) throw new Error(`interactive-gummert HTTP ${gummertRes.status}`);
         const md = await textRes.text();
         const datesMd = await datesRes.text();
         const mediaMd = await mediaRes.text();
         const mongMd = await mongRes.text();
+        const gummertMd = await gummertRes.text();
         sidebarDatesByChapter = parseSidebarDates(datesMd);
         mediaPlacementByChapter = parseMediaPlacement(mediaMd);
         MONG_CONFIG = parseMongConfig(mongMd);
+        GUMMERT_CONFIG = parseGummertConfig(gummertMd);
         const chapters = parseMarkdown(md);
         render(chapters);
         renderMong();
+        renderGummert();
       } catch (err) {
         document.getElementById('timeline').innerHTML = `<div class="error">Не удалось загрузить проектные markdown-файлы. Скорее всего, страницу открыли как file:// и браузер заблокировал fetch. Подними локальный сервер в папке проекта и открой страницу через localhost.</div>`;
         console.error(err);
@@ -826,6 +920,120 @@
   </script>
 
   <script>
+    // ── Интерактив: Школа Гуммерта ─────────────────────────────────────
+
+    let GUMMERT_CONFIG = { kicker: '', title: '', desc: '', restartBtnText: '', questions: {}, ends: {} };
+
+    function parseGummertConfig(md) {
+      const cfg = { kicker: '', title: '', desc: '', restartBtnText: 'Попробовать ещё раз', questions: {}, ends: {} };
+      const lines = md.split('\n');
+      let section = 'meta';
+      let currentId = null;
+      let currentObj = null;
+
+      const field = (line, key) => {
+        const prefix = `**${key}:**`;
+        return line.startsWith(prefix) ? line.slice(prefix.length).trim() : null;
+      };
+
+      for (const raw of lines) {
+        const line = raw.replace(/\r$/, '');
+        const qMatch = line.match(/^## Вопрос (\S+)/);
+        const eMatch = line.match(/^## Финал (\S+)/);
+
+        if (qMatch) {
+          currentId = qMatch[1];
+          currentObj = { text: '', yesLabel: '', noLabel: '', yesNext: '', noNext: '' };
+          cfg.questions[currentId] = currentObj;
+          section = 'question';
+          continue;
+        }
+        if (eMatch) {
+          currentId = eMatch[1];
+          currentObj = { title: '', text: '' };
+          cfg.ends[currentId] = currentObj;
+          section = 'end';
+          continue;
+        }
+
+        if (section === 'meta') {
+          if (field(line, 'kicker') !== null) { cfg.kicker = field(line, 'kicker'); continue; }
+          if (field(line, 'title') !== null) { cfg.title = field(line, 'title'); continue; }
+          if (field(line, 'desc') !== null) { cfg.desc = field(line, 'desc'); continue; }
+          if (field(line, 'restart-btn') !== null) { cfg.restartBtnText = field(line, 'restart-btn'); continue; }
+        }
+        if (section === 'question' && currentObj) {
+          if (field(line, 'text') !== null) { currentObj.text = field(line, 'text'); continue; }
+          if (field(line, 'yes-label') !== null) { currentObj.yesLabel = field(line, 'yes-label'); continue; }
+          if (field(line, 'no-label') !== null) { currentObj.noLabel = field(line, 'no-label'); continue; }
+          if (field(line, 'yes-next') !== null) { currentObj.yesNext = field(line, 'yes-next'); continue; }
+          if (field(line, 'no-next') !== null) { currentObj.noNext = field(line, 'no-next'); continue; }
+        }
+        if (section === 'end' && currentObj) {
+          if (field(line, 'title') !== null) { currentObj.title = field(line, 'title'); continue; }
+          if (field(line, 'text') !== null) { currentObj.text = field(line, 'text'); continue; }
+        }
+      }
+      return cfg;
+    }
+
+    let gummertState = { node: 'q1' };
+
+    function gummertAnswer(next) {
+      gummertState.node = next;
+      renderGummert();
+    }
+
+    function gummertRestart() {
+      gummertState = { node: 'q1' };
+      renderGummert();
+    }
+
+    function buildGummertHtml() {
+      const cfg = GUMMERT_CONFIG;
+      const head = `
+        <div class="im-gummert-head">
+          <div class="im-gummert-kicker">${escapeHtml(cfg.kicker)}</div>
+          <div class="im-gummert-title">${escapeHtml(cfg.title)}</div>
+          <div class="im-gummert-desc">${escapeHtml(cfg.desc)}</div>
+        </div>
+      `;
+
+      const node = gummertState.node;
+      const question = cfg.questions[node];
+      const end = cfg.ends[node];
+
+      if (question) {
+        return head + `
+          <div class="im-gummert-body">
+            <div class="im-gummert-question">${escapeHtml(question.text)}</div>
+            <div class="im-gummert-btn-row">
+              <button class="im-gummert-btn" onclick="gummertAnswer('${escapeHtml(question.yesNext)}')">${escapeHtml(question.yesLabel)}</button>
+              <button class="im-gummert-btn" onclick="gummertAnswer('${escapeHtml(question.noNext)}')">${escapeHtml(question.noLabel)}</button>
+            </div>
+          </div>
+        `;
+      }
+
+      if (end) {
+        return head + `
+          <div class="im-gummert-end">
+            <div class="im-gummert-end-title">${escapeHtml(end.title)}</div>
+            <div class="im-gummert-end-text">${escapeHtml(end.text)}</div>
+            <button class="im-gummert-restart-btn" onclick="gummertRestart()">${escapeHtml(cfg.restartBtnText)}</button>
+          </div>
+        `;
+      }
+
+      return head;
+    }
+
+    function renderGummert() {
+      const el = document.getElementById('interactive-gummert');
+      if (!el) return;
+      el.innerHTML = buildGummertHtml();
+    }
+
     // ── Интерактив: Моң есть или нет? ──────────────────────────────────
     // Всё редактируемое содержимое — в interactive-mong.md
 

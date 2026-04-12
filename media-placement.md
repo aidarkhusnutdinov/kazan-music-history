@@ -19,6 +19,14 @@
 
 ---
 
+# 2. Слияние двух культур
+
+- **position:** after-block-2
+  - **block:** Школа Гуммерта и музыкальное училище
+  - **type:** interactive-gummert
+
+---
+
 # 3. Опера и балет до 1930-х
 
 - **position:** before-blocks
