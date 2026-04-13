@@ -9,7 +9,7 @@
 - **position:** after-block-0
   - **type:** image
   - **src:** `kazan-panorama.jpg`
-  - **caption:** Панорама как вход в текст: сначала город, потом уже его музыкальная жизнь
+  - **caption:** Панорама Казани начала века
 
 - **position:** after-block-2
   - **block:** Новый этап татарской музыки
@@ -24,6 +24,7 @@
 - **position:** after-block-2
   - **block:** Школа Гуммерта и музыкальное училище
   - **type:** interactive-gummert
+  - **src:** ``
 
 ---
 
@@ -56,6 +57,7 @@
 - **position:** after-block-2
   - **block:** Моң и академическая школа
   - **type:** interactive-mong
+  - **src:** ``
 
 - **position:** after-block-3
   - **block:** Союз композиторов
