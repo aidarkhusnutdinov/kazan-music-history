@@ -566,7 +566,7 @@
   <main class="page">
     <section class="intro">
       <h1>Музыкальная жизнь Казани</h1>
-      <p class="lead">Рассказываем об основных именах и событиях в казанской музыке за последние 150 лет. Жмите на кнопки, играйте в игры и узнавайте, чем жил город — от фольклора и оперы до рэпа.</p>
+      <p class="lead"></p>
     </section>
 
     <section class="timeline" id="timeline"></section>
@@ -910,6 +910,8 @@
         MONG_CONFIG = parseMongConfig(mongMd);
         GUMMERT_CONFIG = parseGummertConfig(gummertMd);
         const chapters = parseMarkdown(md);
+        const leadMatch = md.match(/^\*\*lead:\*\*\s*(.+)$/m);
+        if (leadMatch) document.querySelector('.lead').textContent = leadMatch[1].trim();
         render(chapters);
         renderMong();
         renderGummert();
