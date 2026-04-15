@@ -395,6 +395,31 @@
       cursor: pointer;
     }
     .im-gummert-restart-btn:hover { border-color: #295ea8; color: #295ea8; }
+    .embed-widget-strip {
+      margin: 18px auto;
+      zoom: 1.1111;
+      width: 90%;
+    }
+    .embed-widget-box {
+      border: 1px solid var(--line);
+      background: var(--bg);
+      border-radius: 18px;
+      box-shadow: 0 8px 24px var(--shadow);
+      padding: 20px;
+    }
+    .embed-widget-box iframe {
+      display: block;
+      width: 100% !important;
+      border-radius: 12px;
+    }
+    .sources {
+      margin: 48px 0 0 120px;
+      font: 15px/1.55 Arial, sans-serif;
+      color: var(--muted);
+      max-width: 760px;
+      border-top: 1px solid var(--line);
+      padding-top: 20px;
+    }
 
     /* ── Интерактив: Моң есть или нет? ── */
     .im-mong {
@@ -575,6 +600,7 @@
   <script>
     let sidebarDatesByChapter = {};
     let mediaPlacementByChapter = {};
+    let pendingEmbeds = [];
 
     function escapeHtml(str) {
       return str
@@ -720,6 +746,19 @@
           currentItemsList.push(line.trim().slice(3, -1));
           continue;
         }
+        if (line.includes('**html-start:**')) {
+          currentItem.embedLines = [];
+          continue;
+        }
+        if (line.includes('**html-end:**')) {
+          currentItem.embedHtml = (currentItem.embedLines || []).join('\n');
+          delete currentItem.embedLines;
+          continue;
+        }
+        if (currentItem.embedLines !== undefined) {
+          currentItem.embedLines.push(raw);
+          continue;
+        }
       }
 
       finishItem();
@@ -786,6 +825,12 @@
       return chapters;
     }
 
+    function parseSources(md) {
+      const match = md.match(/^#\s+Источники\s*\n([\s\S]*?)(\n---|\n#\s|$)/m);
+      if (!match) return null;
+      return match[1].trim();
+    }
+
     function renderDateTrack(chapterTitle) {
       const groups = sidebarDatesByChapter[chapterTitle] || {};
       const order = (groups && groups._order) || [];
@@ -849,7 +894,68 @@
       if (item.type === 'interactive-gummert') {
         return `<div id="interactive-gummert" class="im-gummert"></div>`;
       }
+      if (item.type === 'embed' && item.embedHtml) {
+        const id = 'embed-' + Math.random().toString(36).slice(2);
+        pendingEmbeds.push({ id, html: item.embedHtml, caption: item.caption || '' });
+        return `
+          <div class="embed-widget-strip">
+            <div class="embed-widget-box" id="${id}"></div>
+            ${item.caption ? `<div class="media-caption">${escapeHtml(item.caption)}</div>` : ''}
+          </div>
+        `;
+      }
       return '';
+    }
+
+    function activateEmbeds() {
+      pendingEmbeds.forEach(({ id, html }) => {
+        const container = document.getElementById(id);
+        if (!container) return;
+        container.innerHTML = html;
+
+        const scripts = Array.from(container.querySelectorAll('script'));
+        scripts.forEach(s => s.remove());
+
+        const external = scripts.filter(s => s.src);
+        const inline = scripts.filter(s => !s.src);
+
+        const runInline = () => {
+          inline.forEach(old => {
+            const s = document.createElement('script');
+            s.textContent = old.textContent;
+            document.head.appendChild(s);
+          });
+          // После инициализации VK переопределяем ширину iframe
+          setTimeout(() => {
+            const box = document.getElementById(id);
+            if (box) {
+              const iframe = box.querySelector('iframe');
+              if (iframe) {
+                iframe.removeAttribute('width');
+                iframe.style.setProperty('width', '100%', 'important');
+              }
+            }
+          }, 1500);
+        };
+
+        const loadNext = (queue, done) => {
+          if (!queue.length) { done(); return; }
+          const old = queue[0];
+          // если такой внешний скрипт уже загружен — не грузим повторно
+          if (document.querySelector(`script[src="${old.src}"]`)) {
+            loadNext(queue.slice(1), done);
+            return;
+          }
+          const s = document.createElement('script');
+          s.src = old.src;
+          s.onload = () => loadNext(queue.slice(1), done);
+          s.onerror = () => loadNext(queue.slice(1), done);
+          document.head.appendChild(s);
+        };
+
+        loadNext(external, runInline);
+      });
+      pendingEmbeds = [];
     }
 
     function renderInlineMedia(chapterTitle, position) {
@@ -913,8 +1019,16 @@
         const leadMatch = md.match(/^\*\*lead:\*\*\s*(.+)$/m);
         if (leadMatch) document.querySelector('.lead').textContent = leadMatch[1].trim();
         render(chapters);
+        activateEmbeds();
         renderMong();
         renderGummert();
+        const sources = parseSources(md);
+        if (sources) {
+          const el = document.createElement('p');
+          el.className = 'sources';
+          el.textContent = sources;
+          document.querySelector('.page').appendChild(el);
+        }
       } catch (err) {
         document.getElementById('timeline').innerHTML = `<div class="error">Не удалось загрузить проектные markdown-файлы. Скорее всего, страницу открыли как file:// и браузер заблокировал fetch. Подними локальный сервер в папке проекта и открой страницу через localhost.</div>`;
         console.error(err);

@@ -15,11 +15,24 @@
   - **block:** Новый этап татарской музыки
   - **type:** youtube
   - **src:** `https://www.youtube.com/embed/k4hUMkl9GY0`
-  - **caption:** Видео-врезка после блока «Новый этап татарской музыки».
+  - **caption:** «Әпипә» — пожалуй, самая узнаваемая татарская народная песня
 
 ---
 
 # 2. Слияние двух культур
+
+- **position:** after-block-1
+  - **type:** embed
+  - **caption:** Граммофонные записи татарских песен начала XX века
+  - **html-start:**
+<div id="vk_playlist_1998186_15"></div>
+<script type="text/javascript" src="https://vk.com/js/api/openapi.js?173"></script>
+<script type="text/javascript">
+  (function() {
+    VK.Widgets.Playlist("vk_playlist_1998186_15", 1998186, 15,'671b1e2a093d7ce2f3');
+  }());
+</script>
+  - **html-end:**
 
 - **position:** after-block-2
   - **block:** Школа Гуммерта и музыкальное училище
