@@ -784,7 +784,7 @@
         ...baseItem, // сохраняем старые свойства (включая block, если есть)
         position: positionEl.value,
         type: typeEl.value,
-        caption: captionEl.value.trim()
+        caption: captionEl.value.trim().replace(/\s*\n\s*/g, ' ')
       };
       if (item.type === 'image-grid') item.items = itemsEl.value.split('\n').map(s => s.trim()).filter(Boolean);
       else item.src = normalizeMediaPath(srcEl.value);
@@ -1010,14 +1010,11 @@
 
     async function saveToFile() {
       try {
-        const payload = { chapters: {} };
-        textChapters.forEach(chapterObj => {
-          payload.chapters[chapterObj.title] = state[chapterObj.title] || [];
-        });
-        const res = await fetch('/save-media', {
+        const md = renderMd();
+        const res = await fetch('/save-media-raw', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+          body: md
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);

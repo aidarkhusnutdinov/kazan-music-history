@@ -208,6 +208,20 @@ function serveFile(res, filePath) {
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${HOST}:${PORT}`);
 
+  if (req.method === 'POST' && url.pathname === '/save-media-raw') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; if (body.length > 10 * 1024 * 1024) req.destroy(); });
+    req.on('end', () => {
+      try {
+        fs.writeFileSync(MEDIA_MD, body, 'utf8');
+        sendJson(res, 200, { ok: true, target: 'media-placement.md' });
+      } catch (error) {
+        sendJson(res, 500, { ok: false, error: String(error.message || error) });
+      }
+    });
+    return;
+  }
+
   if (req.method === 'POST' && (url.pathname === '/save-media' || url.pathname === '/save-text-draft-block')) {
     let body = '';
     req.on('data', chunk => {
