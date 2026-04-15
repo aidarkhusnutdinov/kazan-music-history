@@ -64,6 +64,13 @@ function renderMd(data) {
         for (const src of Array.isArray(item.items) ? item.items : []) {
           out.push(`    - \`${src}\``);
         }
+      } else if (item.type === 'embed') {
+        out.push(`  - **src:** \`\``);
+        if (item.embedHtml) {
+          out.push('  - **html-start:**');
+          out.push(item.embedHtml);
+          out.push('  - **html-end:**');
+        }
       } else {
         out.push(`  - **src:** \`${item.src || ''}\``);
       }
