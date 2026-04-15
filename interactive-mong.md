@@ -33,12 +33,12 @@
 **a-youtube:** https://www.youtube.com/watch?v=HYTc22kHP50
 **a-start:** 31
 **a-end:** 51
-**a-label:** Отрывок А
+**a-label:** 
 
 **b-youtube:** VoeWD66-EsQ
 **b-start:** 24
 **b-end:** 40
-**b-label:** Отрывок Б
+**b-label:** 
 
 ---
 
@@ -56,12 +56,12 @@
 **a-youtube:** https://www.youtube.com/watch?v=li_abh2NAdk
 **a-start:** 19
 **a-end:** 40
-**a-label:** Отрывок А
+**a-label:** 
 
 **b-youtube:** https://www.youtube.com/watch?v=j-7Rig5ryD0
 **b-start:** 8
 **b-end:** 40
-**b-label:** Отрывок Б
+**b-label:** 
 
 ---
 
@@ -79,9 +79,9 @@
 **a-youtube:** https://www.youtube.com/watch?v=n5cDq7K9QxE
 **a-start:** 25
 **a-end:** 40
-**a-label:** Отрывок А
+**a-label:** 
 
 **b-youtube:** https://www.youtube.com/watch?v=ziEFDu9qP8w
 **b-start:** 68
 **b-end:** 86
-**b-label:** Отрывок Б
+**b-label:** 

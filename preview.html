@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Музыкальная жизнь Казани — превью</title>
+  <title>Музыкальная жизнь Казани</title>
   <style>
     :root {
       --bg: #f5f1e8;
@@ -1290,11 +1290,11 @@
           <div class="im-mong-options">
             <div class="im-mong-option">
               <iframe src="${mongYtSrc(r.a)}" title="${escapeHtml(r.a.label)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              <div class="im-mong-option-label">${escapeHtml(r.a.label)}</div>
+              ${r.a.label ? `<div class="im-mong-option-label">${escapeHtml(r.a.label)}</div>` : ''}
             </div>
             <div class="im-mong-option">
               <iframe src="${mongYtSrc(r.b)}" title="${escapeHtml(r.b.label)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              <div class="im-mong-option-label">${escapeHtml(r.b.label)}</div>
+              ${r.b.label ? `<div class="im-mong-option-label">${escapeHtml(r.b.label)}</div>` : ''}
             </div>
           </div>
           <div class="im-mong-btn-row">
