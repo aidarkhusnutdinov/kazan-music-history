@@ -59,6 +59,20 @@
 
 ---
 
+# 4. Татарская музыка в Советском Союзе. Начало
+
+- **position:** after-block-0
+  - **type:** youtube
+  - **src:** `https://www.youtube.com/watch?v=gweoy28oHms`
+  - **caption:** С. Габяши, Г. Альмухаметов, В. Виноградов — Увертюра из оперы «Сания». Оркестровка А. Кулакова
+
+- **position:** after-block-1
+  - **type:** youtube
+  - **src:** `https://www.youtube.com/watch?v=xuuGd3RHg2M`
+  - **caption:** Ф. Яруллин — балет «Шурале» (1945)
+
+---
+
 # 5. Как работает новая система
 
 - **position:** before-blocks
@@ -79,6 +93,16 @@
   - **src:** `https://cdn-static.i-m-i.ru/imi-static/store/uploads/ckeditorimage/1232/image/main-9ca1cb715312fccc744c27e0f9439e62.jpg`
   - **caption:** Состав Союза композиторов ТАССР. Сидят (слева направо): Ю. Виноградов, Н. Жиганов, С. Сайдашев, М. Музафаров, А. Ключарев. Стоят: А. Рыжкин, Х. Валиуллин, А. Леман, З. Хабибуллин, Д. Файзи. 1948 г. / Фотоархив Национальной библиотеки Республики Татарстан
 
+- **position:** after-block-0
+  - **type:** youtube
+  - **src:** `https://www.youtube.com/watch?v=b32TA9yT3ZM`
+  - **caption:** Ренат Ибрагимов — «Хуҗа Насретдин» (1983)
+
+- **position:** after-block-1
+  - **type:** youtube
+  - **src:** `https://www.youtube.com/watch?v=73QKom9aEGY`
+  - **caption:** С. Сайдашев — Марш Красной армии
+
 ---
 
 # 6. Рок-музыка в Казани
@@ -93,7 +117,12 @@
   - **block:** Магди
   - **type:** youtube
   - **src:** `https://www.youtube.com/embed/kbvQFSLikjE`
-  - **caption:** Видео-врезка после блока «Магди».
+  - **caption:** Фолк-рок-опера «Магди»
+
+- **position:** after-block-0
+  - **type:** youtube
+  - **src:** `https://youtu.be/QOxi477fR_w`
+  - **caption:** Ильхам Шакиров и ВИА «Идель» — «Чулпан»
 
 ---
 
@@ -103,12 +132,12 @@
   - **block:** Клубы, группы и фестивали
   - **type:** youtube
   - **src:** `https://www.youtube.com/embed/F5VW6f-BRf4`
-  - **caption:** Видео-врезка после блока «Клубы, группы и фестивали».
+  - **caption:** 7Б — «Дурак»
 
 - **position:** after-block-2
   - **block:** Маяковский. Желтая кофта
   - **type:** youtube
   - **src:** `https://www.youtube.com/embed/GePJsfmD7Iw`
-  - **caption:** Видео-врезка после блока «Маяковский. Желтая кофта».
+  - **caption:** Мубай и Зуля Камалова — «Җизнәкәй» (2013)
 
 ---
