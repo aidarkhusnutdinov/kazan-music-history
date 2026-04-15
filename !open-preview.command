@@ -13,5 +13,5 @@ fi
 node ./local-preview-server.js >/tmp/kazan-music-preview.log 2>&1 &
 SERVER_PID=$!
 sleep 1
-open "http://localhost:$PORT/preview.html"
+open "http://localhost:$PORT/index.html"
 echo $SERVER_PID > /tmp/kazan-music-preview.pid

@@ -263,7 +263,7 @@ const server = http.createServer((req, res) => {
   }
 
   let pathname = url.pathname;
-  if (pathname === '/') pathname = '/preview.html';
+  if (pathname === '/') pathname = '/index.html';
   const filePath = safeJoin(BASE_DIR, pathname);
   if (!filePath) {
     res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
