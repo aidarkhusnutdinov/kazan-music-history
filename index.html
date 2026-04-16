@@ -242,7 +242,7 @@
     details.block summary {
       list-style: none;
       cursor: pointer;
-      padding: 18px 22px 20px;
+      padding: 18px 22px 52px;
       position: relative;
     }
     details.block summary::-webkit-details-marker { display: none; }
@@ -261,16 +261,36 @@
     }
     .toggle {
       position: absolute;
-      right: 18px;
-      top: 20px;
-      font: 22px/1 Arial, sans-serif;
-      color: var(--muted);
-      background: transparent;
-      border: 0;
-      width: auto;
-      height: auto;
+      right: 16px;
+      bottom: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1.5px solid #c4b89e;
+      box-shadow: 0 2px 8px rgba(0,0,0,.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .18s, border-color .18s, box-shadow .18s;
     }
-    details[open] .toggle { transform: rotate(180deg); }
+    .toggle svg {
+      width: 14px; height: 14px;
+      stroke: #7a6a4a;
+      stroke-width: 2;
+      fill: none;
+      transition: transform .22s;
+    }
+    details.block:not([open]) summary:hover .toggle {
+      background: #f0e8d4;
+      border-color: #a09070;
+      box-shadow: 0 4px 12px rgba(0,0,0,.14);
+    }
+    details[open] .toggle {
+      background: #e8dfc8;
+      border-color: #9a8860;
+    }
+    details[open] .toggle svg { transform: rotate(180deg); }
     .expand {
       border-top: 1px solid var(--line);
       padding: 18px 22px 22px;
@@ -979,7 +999,7 @@
                   <summary>
                     <div class="block-kicker">${escapeHtml(block.title || '')}</div>
                     <div class="block-main markdown">${blockTextToHtml(block.main)}</div>
-                    <span class="toggle">⌄</span>
+                    <span class="toggle"><svg viewBox="0 0 14 14"><polyline points="2,4 7,10 12,4"/></svg></span>
                   </summary>
                   <div class="expand">
                     <div class="markdown">${blockTextToHtml(block.expand || '')}</div>
