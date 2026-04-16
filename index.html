@@ -292,17 +292,21 @@
       .page { width: min(100vw - 24px, 900px); padding-top: 24px; }
       .intro, .timeline { margin-left: 0; padding-right: 0; }
       .timeline::before { left: 14px; }
-      .chapter-body { margin-left: 48px; max-width: none; }
+      .chapter { display: flex; flex-direction: column; }
+      .chapter-anchor { order: 0; }
       .chapter-title {
+        order: 1;
         position: static;
         width: auto;
         font-size: clamp(20px, 5.4vw, 30px);
         margin: 0 0 16px;
       }
+      .chapter-body { order: 2; margin-left: 48px; max-width: none; }
       .chapter-date {
+        order: 3;
         position: static;
         width: auto;
-        margin: 0 0 12px 48px;
+        margin: 16px 0 0 48px;
         padding-left: 0;
       }
       .chapter-date::before { display: none; }
