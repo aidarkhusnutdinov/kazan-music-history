@@ -482,6 +482,8 @@
       overflow: hidden;
       background: rgba(255,255,255,.72);
       transition: border-color .15s;
+      display: flex;
+      flex-direction: column;
     }
     .im-mong-option.chosen {
       border-color: #295ea8;
@@ -502,17 +504,9 @@
       color: #6b6258;
       font-weight: 600;
     }
-    .im-mong-btn-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 4px;
-    }
-    @media (max-width: 600px) {
-      .im-mong-btn-row { grid-template-columns: 1fr; }
-    }
     .im-mong-choose-btn {
       padding: 11px 16px;
+      margin: 10px 12px 12px;
       border-radius: 10px;
       border: 1.5px solid #295ea8;
       background: transparent;
@@ -1291,15 +1285,13 @@
             <div class="im-mong-option">
               <iframe src="${mongYtSrc(r.a)}" title="${escapeHtml(r.a.label)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               ${r.a.label ? `<div class="im-mong-option-label">${escapeHtml(r.a.label)}</div>` : ''}
+              <button class="im-mong-choose-btn" onclick="mongChoose('a')">${escapeHtml(chooseBtnA)}</button>
             </div>
             <div class="im-mong-option">
               <iframe src="${mongYtSrc(r.b)}" title="${escapeHtml(r.b.label)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               ${r.b.label ? `<div class="im-mong-option-label">${escapeHtml(r.b.label)}</div>` : ''}
+              <button class="im-mong-choose-btn" onclick="mongChoose('b')">${escapeHtml(chooseBtnB)}</button>
             </div>
-          </div>
-          <div class="im-mong-btn-row">
-            <button class="im-mong-choose-btn" onclick="mongChoose('a')">${escapeHtml(chooseBtnA)}</button>
-            <button class="im-mong-choose-btn" onclick="mongChoose('b')">${escapeHtml(chooseBtnB)}</button>
           </div>
         </div>
       `;

@@ -44,29 +44,6 @@
 
 ## Раунд 2
 
-**prompt:** А теперь задачка посложнее. Какой отрывок моңлы?
-
-**choose-btn-a:** Все ясно. Этот
-**choose-btn-b:** Только этот и никакой другой
-**chosen-note-a:** Ittifaq — первопроходцы рэпа на татарском — знают толк в моң.
-**chosen-note-b:** Твое сердце тронула «Ак кәгазь».
-**chosen-explanation:** Моң сложно объяснить, но легко почувствовать.
-**next-btn:** Дальше
-
-**a-youtube:** https://www.youtube.com/watch?v=li_abh2NAdk
-**a-start:** 19
-**a-end:** 40
-**a-label:** 
-
-**b-youtube:** https://www.youtube.com/watch?v=j-7Rig5ryD0
-**b-start:** 8
-**b-end:** 40
-**b-label:** 
-
----
-
-## Раунд 3
-
 **prompt:** И совсем непросто
 
 **choose-btn-a:** Этот
@@ -74,7 +51,7 @@
 **chosen-note-a:** Кто сказал, что моң и рок-н-ролл не могут подружиться?
 **chosen-note-b:** Люди в зале недаром плачут под Зульфата Хакима.
 **chosen-explanation:** Было сложно, но ты справился.
-**next-btn:** Посмотреть ответ
+**next-btn:** Дальше
 
 **a-youtube:** https://www.youtube.com/watch?v=n5cDq7K9QxE
 **a-start:** 25
@@ -84,4 +61,27 @@
 **b-youtube:** https://www.youtube.com/watch?v=ziEFDu9qP8w
 **b-start:** 68
 **b-end:** 86
+**b-label:** 
+
+---
+
+## Раунд 3
+
+**prompt:** А теперь задачка посложнее. Какой отрывок моңлы?
+
+**choose-btn-a:** Все ясно. Этот
+**choose-btn-b:** Только этот и никакой другой
+**chosen-note-a:** Ittifaq — первопроходцы рэпа на татарском — знают толк в моң.
+**chosen-note-b:** Твое сердце тронула «Ак кәгазь».
+**chosen-explanation:** Моң сложно объяснить, но легко почувствовать.
+**next-btn:** Посмотреть ответ
+
+**a-youtube:** https://www.youtube.com/watch?v=li_abh2NAdk
+**a-start:** 19
+**a-end:** 40
+**a-label:** 
+
+**b-youtube:** https://www.youtube.com/watch?v=j-7Rig5ryD0
+**b-start:** 8
+**b-end:** 40
 **b-label:** 
