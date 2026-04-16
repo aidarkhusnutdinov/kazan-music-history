@@ -231,21 +231,21 @@
       border: 0;
       display: block;
     }
-    details.block {
+    .block {
       border: 1px solid var(--line);
       background: var(--card);
       border-radius: 18px;
       overflow: hidden;
       box-shadow: 0 8px 24px var(--shadow);
+      transition: background .25s;
     }
-    details.block[open] { background: #fffaf2; }
-    details.block summary {
-      list-style: none;
+    .block.open { background: #fffaf2; }
+    .block-summary {
       cursor: pointer;
       padding: 18px 22px 52px;
       position: relative;
+      user-select: none;
     }
-    details.block summary::-webkit-details-marker { display: none; }
     .block-kicker {
       font: 11px/1.2 Arial, sans-serif;
       text-transform: uppercase;
@@ -279,19 +279,29 @@
       stroke: #7a6a4a;
       stroke-width: 2;
       fill: none;
-      transition: transform .22s;
+      transition: transform .25s;
     }
-    details.block:not([open]) summary:hover .toggle {
+    .block:not(.open) .block-summary:hover .toggle {
       background: #f0e8d4;
       border-color: #a09070;
       box-shadow: 0 4px 12px rgba(0,0,0,.14);
     }
-    details[open] .toggle {
+    .block.open .toggle {
       background: #e8dfc8;
       border-color: #9a8860;
     }
-    details[open] .toggle svg { transform: rotate(180deg); }
+    .block.open .toggle svg { transform: rotate(180deg); }
+    /* grid-template-rows animation — most reliable CSS-only expand */
+    .expand-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .32s cubic-bezier(.4,0,.2,1);
+    }
+    .block.open .expand-wrap { grid-template-rows: 1fr; }
     .expand {
+      overflow: hidden;
+    }
+    .expand-inner {
       border-top: 1px solid var(--line);
       padding: 18px 22px 22px;
       background: rgba(255,255,255,.45);
@@ -985,6 +995,14 @@
     }
 
 
+    function initBlocks() {
+      document.querySelectorAll('.block').forEach(block => {
+        block.querySelector('.block-summary').addEventListener('click', () => {
+          block.classList.toggle('open');
+        });
+      });
+    }
+
     function render(chapters) {
       const root = document.getElementById('timeline');
       root.innerHTML = chapters.map((chapter, idx) => `
@@ -996,16 +1014,18 @@
             ${renderInlineMedia(chapter.title, 'before-blocks')}
             <div class="blocks">
               ${chapter.blocks.map((block, blockIdx) => `
-                <details class="block">
-                  <summary>
+                <div class="block">
+                  <div class="block-summary">
                     <div class="block-kicker">${escapeHtml(block.title || '')}</div>
                     <div class="block-main markdown">${blockTextToHtml(block.main)}</div>
                     <span class="toggle"><svg viewBox="0 0 14 14"><polyline points="2,4 7,10 12,4"/></svg></span>
-                  </summary>
-                  <div class="expand">
-                    <div class="markdown">${blockTextToHtml(block.expand || '')}</div>
                   </div>
-                </details>
+                  <div class="expand-wrap">
+                    <div class="expand">
+                      <div class="expand-inner markdown">${blockTextToHtml(block.expand || '')}</div>
+                    </div>
+                  </div>
+                </div>
                 ${renderInlineMedia(chapter.title, `after-block-${blockIdx}`)}
               `).join('')}
             </div>
@@ -1041,6 +1061,7 @@
         const leadMatch = md.match(/^\*\*lead:\*\*\s*(.+)$/m);
         if (leadMatch) document.querySelector('.lead').textContent = leadMatch[1].trim();
         render(chapters);
+        initBlocks();
         activateEmbeds();
         renderMong();
         renderGummert();
