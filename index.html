@@ -293,13 +293,16 @@
       .intro, .timeline { margin-left: 0; padding-right: 0; }
       .timeline::before { left: 14px; }
       .chapter { display: flex; flex-direction: column; }
-      .chapter-anchor { order: 0; }
+      .chapter-anchor { order: 0; position: absolute; left: 0; top: 0; }
       .chapter-title {
         order: 1;
         position: static;
         width: auto;
         font-size: clamp(20px, 5.4vw, 30px);
-        margin: 0 0 16px;
+        margin: 0 0 16px 48px;
+        min-height: 36px;
+        display: flex;
+        align-items: center;
       }
       .chapter-body { order: 2; margin-left: 48px; max-width: none; }
       .chapter-date {
