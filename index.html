@@ -291,10 +291,14 @@
       border-color: #9a8860;
     }
     details[open] .toggle svg { transform: rotate(180deg); }
+    details.block[open] summary {
+      border-bottom: 1px solid var(--line);
+    }
     .expand {
-      border-top: 1px solid var(--line);
+      overflow: hidden;
       padding: 18px 22px 22px;
       background: rgba(255,255,255,.45);
+      transition: height .32s cubic-bezier(.4,0,.2,1);
     }
     .expand p { margin: 0; font-size: 17px; white-space: normal; }
     .markdown p { margin: 0 0 10px; }
@@ -984,6 +988,38 @@
       return items.filter(item => item.position === position).map(renderMediaItem).join('');
     }
 
+    function initBlockAnimations() {
+      document.querySelectorAll('details.block').forEach(details => {
+        const summary = details.querySelector('summary');
+        const expand = details.querySelector('.expand');
+
+        summary.addEventListener('click', e => {
+          e.preventDefault();
+
+          if (details.open) {
+            expand.style.height = expand.scrollHeight + 'px';
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => { expand.style.height = '0'; });
+            });
+            expand.addEventListener('transitionend', () => {
+              details.removeAttribute('open');
+              expand.style.height = '';
+            }, { once: true });
+          } else {
+            details.setAttribute('open', '');
+            const h = expand.scrollHeight;
+            expand.style.height = '0';
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => { expand.style.height = h + 'px'; });
+            });
+            expand.addEventListener('transitionend', () => {
+              expand.style.height = '';
+            }, { once: true });
+          }
+        });
+      });
+    }
+
     function render(chapters) {
       const root = document.getElementById('timeline');
       root.innerHTML = chapters.map((chapter, idx) => `
@@ -1040,6 +1076,7 @@
         const leadMatch = md.match(/^\*\*lead:\*\*\s*(.+)$/m);
         if (leadMatch) document.querySelector('.lead').textContent = leadMatch[1].trim();
         render(chapters);
+        initBlockAnimations();
         activateEmbeds();
         renderMong();
         renderGummert();
