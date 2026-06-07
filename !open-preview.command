@@ -1,5 +1,5 @@
 #!/bin/zsh
-DIR="/Users/aidar/Dropbox/Projects 2026/kazan-music-format"
+DIR="/Users/aidar/Dropbox/Projects 2026/01 текущие/kazan-music-format"
 PORT=8011
 cd "$DIR" || exit 1
 
