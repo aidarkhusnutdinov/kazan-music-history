@@ -822,8 +822,8 @@
         const line = raw.replace(/\r$/, '');
         if (line.startsWith('# ')) {
           const title = line.slice(2).trim();
-          if (!/^\d+\./.test(title)) continue;
           flushChapter();
+          if (!/^\d+\./.test(title)) continue;
           currentChapter = { title, blocks: [] };
           mode = null;
           continue;
