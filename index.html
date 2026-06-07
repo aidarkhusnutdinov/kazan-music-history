@@ -629,7 +629,7 @@
       cursor: help;
     }
     #tip-box {
-      position: fixed;
+      position: absolute;
       background: #2f2a24;
       color: #fff;
       font: 13px/1.45 'Graphik', Arial, sans-serif;
@@ -1420,13 +1420,15 @@
 
     function positionTip(el) {
       const r = el.getBoundingClientRect();
+      const sy = window.scrollY || window.pageYOffset;
+      const sx = window.scrollX || window.pageXOffset;
       const bw = tipBox.offsetWidth;
       const bh = tipBox.offsetHeight;
-      let top = r.top - bh - 8;
-      let left = r.left + r.width / 2 - bw / 2;
-      if (top < 8) top = r.bottom + 8;
-      if (left < 8) left = 8;
-      if (left + bw > window.innerWidth - 8) left = window.innerWidth - bw - 8;
+      let top = r.top + sy - bh - 8;
+      let left = r.left + sx + r.width / 2 - bw / 2;
+      if (r.top < bh + 16) top = r.bottom + sy + 8;
+      if (left < sx + 8) left = sx + 8;
+      if (left + bw > sx + window.innerWidth - 8) left = sx + window.innerWidth - bw - 8;
       tipBox.style.top = top + 'px';
       tipBox.style.left = left + 'px';
     }
@@ -1435,6 +1437,7 @@
       const tip = e.target.closest('.tip');
       if (tip) showTip(tip); else hideTip();
     });
+    window.addEventListener('scroll', hideTip, { passive: true });
 
     document.addEventListener('click', e => {
       const tip = e.target.closest('.tip');
