@@ -1403,7 +1403,7 @@
 
     const tipBox = document.createElement('div');
     tipBox.id = 'tip-box';
-    document.documentElement.appendChild(tipBox);
+    document.body.appendChild(tipBox);
     let tipTarget = null;
 
     function showTip(el) {
@@ -1419,15 +1419,17 @@
     }
 
     function positionTip(el) {
+      const zoom = parseFloat(getComputedStyle(document.body).zoom) || 1;
       const r = el.getBoundingClientRect();
-      const bw = tipBox.offsetWidth, bh = tipBox.offsetHeight;
-      let left = r.left + r.width / 2 - bw / 2;
+      const bw = tipBox.offsetWidth;
+      const bh = tipBox.offsetHeight;
       let top = r.top - bh - 8;
+      let left = r.left + r.width / 2 - bw / 2;
       if (top < 8) top = r.bottom + 8;
       if (left < 8) left = 8;
       if (left + bw > window.innerWidth - 8) left = window.innerWidth - bw - 8;
-      tipBox.style.left = left + 'px';
-      tipBox.style.top = top + 'px';
+      tipBox.style.top = (top / zoom) + 'px';
+      tipBox.style.left = (left / zoom) + 'px';
     }
 
     document.addEventListener('mouseover', e => {
