@@ -12,9 +12,12 @@
   - **caption:** Панорама Казани начала века
 
 - **position:** after-block-2
-  - **block:** Новый этап татарской музыки
-  - **type:** youtube
-  - **src:** `https://www.youtube.com/embed/k4hUMkl9GY0`
+  - **block:** А что с татарской музыкой?
+  - **type:** embed
+  - **src:** ``
+  - **html-start:**
+<iframe src="https://vk.com/video_ext.php?oid=-9098030&id=456244828&hd=2" width="640" height="360" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" frameborder="0" allowfullscreen></iframe>
+  - **html-end:**
   - **caption:** «Әпипә» — пожалуй, самая узнаваемая татарская народная песня
 
 ---
@@ -22,6 +25,7 @@
 # 2. Слияние двух культур
 
 - **position:** after-block-1
+  - **block:** Новые явления в татарской музыке: хоры, оркестры, граммофоны
   - **type:** embed
   - **src:** ``
   - **html-start:**
@@ -36,7 +40,7 @@
   - **caption:** Так может звучать татарский хор — народная мелодия в обработке Александра Ключарева (1963 год)
 
 - **position:** after-block-2
-  - **block:** Школа Гуммерта и музыкальное училище
+  - **block:** Школа Гуммерта. Музыкальное училище
   - **type:** interactive-gummert
   - **src:** ``
 
@@ -52,7 +56,7 @@
   - **caption:** Афиши — 1875 и 1899 гг.
 
 - **position:** after-block-1
-  - **block:** Публика, пожар, баржа
+  - **block:** Специфика театральной жизни начала века
   - **type:** image
   - **src:** `https://cdn-static.i-m-i.ru/imi-static/store/uploads/ckeditorimage/1228/image/main-bf7d042f1a1a28b7bec393321304e242.jpg`
   - **caption:** Николай Собольщиков-Самарин
@@ -73,7 +77,7 @@
 
 ---
 
-# 5. Как работает новая система
+# 5. Советская система
 
 - **position:** before-blocks
   - **type:** image-grid
@@ -81,6 +85,16 @@
     - `https://cdn-static.i-m-i.ru/imi-static/store/uploads/content/blockelementitem/124/image/main-74dc247b472823188a2346e663f624e9.jpg`
     - `https://cdn-static.i-m-i.ru/imi-static/store/uploads/content/blockelementitem/125/image/main-224e8f8439a487497b787620ea301f97.jpg`
   - **caption:** Первый выпуск. Диплом получает Хамзина. Педагоги консерватории с Генрихом Литинским. 50-е годы прошлого столетия / history-kazan.ru
+
+- **position:** after-block-0
+  - **type:** youtube
+  - **src:** `https://www.youtube.com/watch?v=b32TA9yT3ZM`
+  - **caption:** Ренат Ибрагимов — «Хуҗа Насретдин» (1983)
+
+- **position:** after-block-1
+  - **type:** youtube
+  - **src:** `https://www.youtube.com/watch?v=73QKom9aEGY`
+  - **caption:** С. Сайдашев — Марш Красной армии
 
 - **position:** after-block-2
   - **block:** Моң и академическая школа
@@ -93,36 +107,20 @@
   - **src:** `https://cdn-static.i-m-i.ru/imi-static/store/uploads/ckeditorimage/1232/image/main-9ca1cb715312fccc744c27e0f9439e62.jpg`
   - **caption:** Состав Союза композиторов ТАССР. Сидят (слева направо): Ю. Виноградов, Н. Жиганов, С. Сайдашев, М. Музафаров, А. Ключарев. Стоят: А. Рыжкин, Х. Валиуллин, А. Леман, З. Хабибуллин, Д. Файзи. 1948 г. / Фотоархив Национальной библиотеки Республики Татарстан
 
-- **position:** after-block-0
-  - **type:** youtube
-  - **src:** `https://www.youtube.com/watch?v=b32TA9yT3ZM`
-  - **caption:** Ренат Ибрагимов — «Хуҗа Насретдин» (1983)
-
-- **position:** after-block-1
-  - **type:** youtube
-  - **src:** `https://www.youtube.com/watch?v=73QKom9aEGY`
-  - **caption:** С. Сайдашев — Марш Красной армии
-
 ---
 
 # 6. Рок-музыка в Казани
-
-- **position:** after-block-2
-  - **block:** Молодёжный центр и рок-клуб
-  - **type:** youtube
-  - **src:** `https://www.youtube.com/embed/3tgcKvc-B7o`
-  - **caption:** Группа «ЗМЧ» в 1987 году
-
-- **position:** after-block-4
-  - **block:** Магди
-  - **type:** youtube
-  - **src:** `https://www.youtube.com/embed/kbvQFSLikjE`
-  - **caption:** Фолк-рок-опера «Магди»
 
 - **position:** after-block-0
   - **type:** youtube
   - **src:** `https://youtu.be/QOxi477fR_w`
   - **caption:** Ильхам Шакиров и ВИА «Идель» — «Чулпан»
+
+- **position:** after-block-2
+  - **block:** Молодежный центр и рок-клуб
+  - **type:** youtube
+  - **src:** `https://www.youtube.com/embed/3tgcKvc-B7o`
+  - **caption:** Группа «ЗМЧ» в 1987 году
 
 ---
 
@@ -135,7 +133,16 @@
   - **caption:** 7Б — «Дурак»
 
 - **position:** after-block-2
-  - **block:** Маяковский. Желтая кофта
+  - **block:** «Маяковский. Желтая кофта»
+  - **type:** youtube
+  - **src:** `https://www.youtube.com/watch?v=ABZkJZvgBII`
+  - **caption:** Who Are These Men — Afarin! (2010)
+
+---
+
+# 8. Татарская эстрада и альтернатива
+
+- **position:** after-block-0
   - **type:** youtube
   - **src:** `https://www.youtube.com/embed/GePJsfmD7Iw`
   - **caption:** Мубай и Зуля Камалова — «Җизнәкәй» (2013)
