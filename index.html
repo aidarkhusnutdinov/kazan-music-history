@@ -645,7 +645,6 @@
   </style>
 </head>
 <body>
-  <div id="tip-box"></div>
   <main class="page">
     <section class="intro">
       <h1>Музыкальная жизнь Казани</h1>
@@ -1402,7 +1401,9 @@
       parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
     }).observe(document.documentElement);
 
-    const tipBox = document.getElementById('tip-box');
+    const tipBox = document.createElement('div');
+    tipBox.id = 'tip-box';
+    document.documentElement.appendChild(tipBox);
     let tipTarget = null;
 
     function showTip(el) {
