@@ -118,6 +118,7 @@
       text-transform: uppercase;
       letter-spacing: .08em;
     }
+    .chapter-date:empty::before { display: none; }
     .chapter-date::before {
       content: "";
       position: absolute;
@@ -907,6 +908,7 @@
     function renderDateTrack(chapterTitle) {
       const groups = sidebarDatesByChapter[chapterTitle] || {};
       const order = (groups && groups._order) || [];
+      if (!order.length) return '';
       return `
         <div class="date-track">
           <div class="date-era">${escapeHtml((groups && groups.era) || '')}</div>
