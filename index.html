@@ -1361,5 +1361,10 @@
       el.innerHTML = buildMongHtml();
     }
   </script>
+  <script>
+    new ResizeObserver(() => {
+      parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
+    }).observe(document.documentElement);
+  </script>
 </body>
 </html>
