@@ -625,6 +625,32 @@
       cursor: pointer;
     }
     .im-mong-next-btn:hover { background: #1f4a87; }
+    .tip {
+      border-bottom: 1px dashed currentColor;
+      cursor: help;
+      position: relative;
+    }
+    .tip::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2f2a24;
+      color: #fff;
+      font: 13px/1.45 'Graphik', Arial, sans-serif;
+      padding: 6px 10px;
+      border-radius: 6px;
+      white-space: normal;
+      width: max-content;
+      max-width: 260px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .15s;
+      z-index: 10;
+    }
+    .tip:hover::after { opacity: 1; }
+    .tip.open::after { opacity: 1; }
   </style>
 </head>
 <body>
@@ -641,6 +667,7 @@
     let sidebarDatesByChapter = {};
     let mediaPlacementByChapter = {};
     let pendingEmbeds = [];
+    let tooltipDict = {};
 
     function escapeHtml(str) {
       return str
@@ -650,8 +677,23 @@
         .replaceAll('"', '&quot;');
     }
 
+    function parseTooltips(md) {
+      const dict = {};
+      for (const line of md.split('\n')) {
+        const m = line.match(/^([^:#]+):\s*(.+)/);
+        if (m) dict[m[1].trim().toLowerCase()] = m[2].trim();
+      }
+      return dict;
+    }
+
     function inlineMarkdownToHtml(text) {
       let html = escapeHtml(text);
+      html = html.replace(/\{([^{}]+)\}/g, (_, word) => {
+        const def = tooltipDict[word.toLowerCase()];
+        return def
+          ? `<span class="tip" data-tip="${escapeHtml(def)}">${escapeHtml(word)}</span>`
+          : escapeHtml(word);
+      });
       html = html.replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '<a target="_blank" rel="noreferrer" href="$2">$1</a>');
       html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
       return html;
@@ -1045,12 +1087,13 @@
 
     async function init() {
       try {
-        const [textRes, datesRes, mediaRes, mongRes, gummertRes] = await Promise.all([
+        const [textRes, datesRes, mediaRes, mongRes, gummertRes, tipsRes] = await Promise.all([
           fetch('./text-draft.md', { cache: 'no-store' }),
           fetch('./chapter-sidebar-dates.md', { cache: 'no-store' }),
           fetch('./media-placement.md', { cache: 'no-store' }),
           fetch('./interactive-mong.md', { cache: 'no-store' }),
           fetch('./interactive-gummert.md', { cache: 'no-store' }),
+          fetch('./tooltips.md', { cache: 'no-store' }),
         ]);
         if (!textRes.ok) throw new Error(`text-draft HTTP ${textRes.status}`);
         if (!datesRes.ok) throw new Error(`chapter-sidebar-dates HTTP ${datesRes.status}`);
@@ -1062,6 +1105,7 @@
         const mediaMd = await mediaRes.text();
         const mongMd = await mongRes.text();
         const gummertMd = await gummertRes.text();
+        if (tipsRes.ok) tooltipDict = parseTooltips(await tipsRes.text());
         sidebarDatesByChapter = parseSidebarDates(datesMd);
         mediaPlacementByChapter = parseMediaPlacement(mediaMd);
         MONG_CONFIG = parseMongConfig(mongMd);
@@ -1365,6 +1409,17 @@
     new ResizeObserver(() => {
       parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
     }).observe(document.documentElement);
+
+    document.addEventListener('click', e => {
+      const tip = e.target.closest('.tip');
+      document.querySelectorAll('.tip.open').forEach(t => {
+        if (t !== tip) t.classList.remove('open');
+      });
+      if (tip) {
+        e.stopPropagation();
+        tip.classList.toggle('open');
+      }
+    });
   </script>
 </body>
 </html>
