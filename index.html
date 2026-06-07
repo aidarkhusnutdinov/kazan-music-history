@@ -627,32 +627,25 @@
     .tip {
       border-bottom: 1px dashed currentColor;
       cursor: help;
-      position: relative;
     }
-    .tip::after {
-      content: attr(data-tip);
-      position: absolute;
-      bottom: calc(100% + 6px);
-      left: 50%;
-      transform: translateX(-50%);
+    #tip-box {
+      position: fixed;
       background: #2f2a24;
       color: #fff;
       font: 13px/1.45 'Graphik', Arial, sans-serif;
       padding: 6px 10px;
       border-radius: 6px;
-      white-space: normal;
-      width: max-content;
       max-width: 260px;
       pointer-events: none;
       opacity: 0;
       transition: opacity .15s;
-      z-index: 10;
+      z-index: 1000;
     }
-    .tip:hover::after { opacity: 1; }
-    .tip.open::after { opacity: 1; }
+    #tip-box.visible { opacity: 1; }
   </style>
 </head>
 <body>
+  <div id="tip-box"></div>
   <main class="page">
     <section class="intro">
       <h1>Музыкальная жизнь Казани</h1>
@@ -1409,14 +1402,45 @@
       parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
     }).observe(document.documentElement);
 
+    const tipBox = document.getElementById('tip-box');
+    let tipTarget = null;
+
+    function showTip(el) {
+      tipTarget = el;
+      tipBox.textContent = el.dataset.tip;
+      tipBox.classList.add('visible');
+      positionTip(el);
+    }
+
+    function hideTip() {
+      tipTarget = null;
+      tipBox.classList.remove('visible');
+    }
+
+    function positionTip(el) {
+      const r = el.getBoundingClientRect();
+      const bw = tipBox.offsetWidth, bh = tipBox.offsetHeight;
+      let left = r.left + r.width / 2 - bw / 2;
+      let top = r.top - bh - 8;
+      if (top < 8) top = r.bottom + 8;
+      if (left < 8) left = 8;
+      if (left + bw > window.innerWidth - 8) left = window.innerWidth - bw - 8;
+      tipBox.style.left = left + 'px';
+      tipBox.style.top = top + 'px';
+    }
+
+    document.addEventListener('mouseover', e => {
+      const tip = e.target.closest('.tip');
+      if (tip) showTip(tip); else hideTip();
+    });
+
     document.addEventListener('click', e => {
       const tip = e.target.closest('.tip');
-      document.querySelectorAll('.tip.open').forEach(t => {
-        if (t !== tip) t.classList.remove('open');
-      });
       if (tip) {
         e.stopPropagation();
-        tip.classList.toggle('open');
+        tipTarget === tip ? hideTip() : showTip(tip);
+      } else {
+        hideTip();
       }
     });
   </script>
