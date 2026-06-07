@@ -1419,7 +1419,6 @@
     }
 
     function positionTip(el) {
-      const zoom = parseFloat(getComputedStyle(document.body).zoom) || 1;
       const r = el.getBoundingClientRect();
       const bw = tipBox.offsetWidth;
       const bh = tipBox.offsetHeight;
@@ -1428,8 +1427,8 @@
       if (top < 8) top = r.bottom + 8;
       if (left < 8) left = 8;
       if (left + bw > window.innerWidth - 8) left = window.innerWidth - bw - 8;
-      tipBox.style.top = (top / zoom) + 'px';
-      tipBox.style.left = (left / zoom) + 'px';
+      tipBox.style.top = top + 'px';
+      tipBox.style.left = left + 'px';
     }
 
     document.addEventListener('mouseover', e => {
