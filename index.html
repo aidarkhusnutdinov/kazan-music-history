@@ -1406,11 +1406,10 @@
     document.body.appendChild(tipBox);
     let tipTarget = null;
 
-    function showTip(el, cx, cy) {
+    function showTip(el) {
       tipTarget = el;
       tipBox.textContent = el.dataset.tip;
       tipBox.classList.add('visible');
-      if (cx !== undefined) moveTip(cx, cy);
     }
 
     function hideTip() {
@@ -1418,43 +1417,43 @@
       tipBox.classList.remove('visible');
     }
 
-    function moveTip(cx, cy) {
+    function moveTip(viewportX, viewportY) {
+      const zoom = parseFloat(getComputedStyle(document.body).zoom) || 1;
+      const sy = window.scrollY || window.pageYOffset;
+      const sx = window.scrollX || window.pageXOffset;
       const bw = tipBox.offsetWidth;
       const bh = tipBox.offsetHeight;
-      const zoom = parseFloat(getComputedStyle(document.body).zoom) || 1;
       const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      // clientX/Y are viewport coords; convert to layout coords for style
-      let left = cx / zoom - bw / 2;
-      let top  = cy / zoom - bh - 12;
-      if (cy - bh - 12 < 8) top = cy / zoom + 20;
-      if (left < 4) left = 4;
-      if (left + bw > vw / zoom - 4) left = vw / zoom - bw - 4;
-      tipBox.style.left = left + 'px';
+      // Переводим viewport-coords в layout-coords для position:absolute
+      let top  = (viewportY + sy - bh - 10) / zoom;
+      let left = (viewportX + sx - bw / 2)  / zoom;
+      if (viewportY - bh - 10 < 8) top = (viewportY + sy + 14) / zoom;
+      if (left * zoom < sx + 6) left = (sx + 6) / zoom;
+      if ((left + bw) * zoom > sx + vw - 6) left = (sx + vw - bw - 6) / zoom;
       tipBox.style.top  = top  + 'px';
+      tipBox.style.left = left + 'px';
     }
 
+    // Десктоп: показ при наведении, позиция по курсору
+    document.addEventListener('mouseover', e => {
+      const tip = e.target.closest('.tip');
+      if (tip) { showTip(tip); moveTip(e.clientX, e.clientY); }
+      else hideTip();
+    });
     document.addEventListener('mousemove', e => {
       if (tipTarget) moveTip(e.clientX, e.clientY);
     });
-
-    document.addEventListener('mouseover', e => {
-      const tip = e.target.closest('.tip');
-      if (tip) showTip(tip, e.clientX, e.clientY);
-      else hideTip();
-    });
-
     window.addEventListener('scroll', hideTip, { passive: true });
 
+    // Мобильный: показ/скрытие по тапу
     document.addEventListener('click', e => {
       const tip = e.target.closest('.tip');
       if (tip) {
         e.stopPropagation();
         if (tipTarget === tip) { hideTip(); return; }
+        showTip(tip);
         const r = tip.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top;
-        showTip(tip, cx, cy);
+        moveTip(r.left + r.width / 2, r.top);
       } else {
         hideTip();
       }
