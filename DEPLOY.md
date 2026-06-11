@@ -58,7 +58,7 @@ URL сайта: `https://kazan-music-history.website.yandexcloud.net`
 
 ## Как работает пайплайн?
 
-Файл `.github/workflows/deploy.yml` при пуше в `main`:
+Файл `.github/workflows/deploy.yml` при пуше в ветку `main`:
 
 1. Берёт файлы из репозитория
 2. Синхронизирует их в бакет через AWS CLI (Яндекс Object Storage совместим с S3)
