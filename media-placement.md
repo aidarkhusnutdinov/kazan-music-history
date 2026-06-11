@@ -51,14 +51,14 @@
 - **position:** before-blocks
   - **type:** image-grid
   - **items:**
-    - `https://cdn-static.i-m-i.ru/imi-static/store/uploads/content/blockelementitem/119/image/main-2052debc71ab2affd739d2360a414c04.jpg`
-    - `https://cdn-static.i-m-i.ru/imi-static/store/uploads/content/blockelementitem/120/image/main-4d8dabe75c4b4b5215f6d1d2752a1d9a.jpg`
+    - `images/ch3-afisha-1875.jpg`
+    - `images/ch3-afisha-1899.jpg`
   - **caption:** Афиши — 1875 и 1899 гг.
 
 - **position:** after-block-1
   - **block:** Специфика театральной жизни начала века
   - **type:** image
-  - **src:** `https://cdn-static.i-m-i.ru/imi-static/store/uploads/ckeditorimage/1228/image/main-bf7d042f1a1a28b7bec393321304e242.jpg`
+  - **src:** `images/ch3-sobolshchikov-samarin.jpg`
   - **caption:** Николай Собольщиков-Самарин
 
 ---
@@ -82,8 +82,8 @@
 - **position:** before-blocks
   - **type:** image-grid
   - **items:**
-    - `https://cdn-static.i-m-i.ru/imi-static/store/uploads/content/blockelementitem/124/image/main-74dc247b472823188a2346e663f624e9.jpg`
-    - `https://cdn-static.i-m-i.ru/imi-static/store/uploads/content/blockelementitem/125/image/main-224e8f8439a487497b787620ea301f97.jpg`
+    - `images/ch5-first-graduation.jpg`
+    - `images/ch5-teachers-litinsky.jpg`
   - **caption:** Первый выпуск. Диплом получает Хамзина. Педагоги консерватории с Генрихом Литинским. 50-е годы прошлого столетия / history-kazan.ru
 
 - **position:** after-block-0
@@ -104,7 +104,7 @@
 - **position:** after-block-3
   - **block:** Союз композиторов
   - **type:** image
-  - **src:** `https://cdn-static.i-m-i.ru/imi-static/store/uploads/ckeditorimage/1232/image/main-9ca1cb715312fccc744c27e0f9439e62.jpg`
+  - **src:** `images/ch5-composers-union.jpg`
   - **caption:** Состав Союза композиторов ТАССР. Сидят (слева направо): Ю. Виноградов, Н. Жиганов, С. Сайдашев, М. Музафаров, А. Ключарев. Стоят: А. Рыжкин, Х. Валиуллин, А. Леман, З. Хабибуллин, Д. Файзи. 1948 г. / Фотоархив Национальной библиотеки Республики Татарстан
 
 ---
