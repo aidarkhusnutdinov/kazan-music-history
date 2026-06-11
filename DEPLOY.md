@@ -2,7 +2,7 @@
 
 Сайт хостится на Яндекс Object Storage. При каждом пуше в `main` GitHub Actions автоматически заливает файлы в бакет.
 
-URL сайта: `https://kazan-music-history.storage.yandexcloud.net`
+URL сайта: `https://kazan-music-history.website.yandexcloud.net`
 
 ---
 
