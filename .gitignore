@@ -1,1 +1,3 @@
 _not-needed-now/
+.gstack/
+!deploy-to-yandex.command
