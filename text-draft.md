@@ -109,7 +109,7 @@
 **Разворот:**
 В конце 1920-х учиться в техникуме начали будущие известные композиторы **Назиб Жиганов**, **Александр Ключарев**, **Юрий Виноградов** и **Фарид Яруллин**.
 
-При Литвинове в 1923 году техникум получил новое здание на улице Жуковского — [бывшую Казанскую земскую управу](https://tatarica.org/ru/razdely/obrazovanie/sredne-specialnoe-obrazovanie/kazanskij-muzykalnyj-kolledzh-imeni-ivauhadeeva), где в 1887–1888 годах работал писарем юный **Шаляпин**; здесь техникум [находится до сих пор](https://history-kazan.ru/kazan-vchera-segodnya-zavtra/istoriya-v-litsakh/18022-aleksandr-litvinov-dirizher-pedagog-skripach).
+При Литвинове в 1923 году техникум получил новое здание на улице Жуковского — [бывшую Казанскую земскую управу](https://tatarica.org/ru/razdely/obrazovanie/sredne-specialnoe-obrazovanie/kazanskij-muzykalnyj-kolledzh-imeni-ivauhadeeva), где в 1887–1888 годах работал писарем юный **Шаляпин**; здесь техникум (сейчас — колледж) [находится до сих пор](https://history-kazan.ru/kazan-vchera-segodnya-zavtra/istoriya-v-litsakh/18022-aleksandr-litvinov-dirizher-pedagog-skripach).
 
 ## Блок 2
 
